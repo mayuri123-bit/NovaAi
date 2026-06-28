@@ -1,0 +1,63 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Geist+Mono:wght@300;400;500;600&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --color-brand-black: #0a0b0d;
+  --color-brand-dark: #111318;
+  --color-brand-cyan: #00f2ff;
+  --color-brand-blue: #0070f3;
+  --color-brand-gray: #8a8f98;
+
+  --font-sans: "Inter", system-ui, sans-serif;
+  --font-mono: "Geist Mono", monospace;
+}
+
+/* Custom Utilities for Glassmorphism and Gradients */
+.glass-card {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.glass-nav {
+  background: rgba(10, 11, 13, 0.8);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.hero-gradient {
+  background: radial-gradient(circle at 70% 30%, rgba(0, 242, 255, 0.08) 0%, transparent 50%),
+              radial-gradient(circle at 10% 80%, rgba(0, 112, 243, 0.05) 0%, transparent 40%);
+}
+
+/* Custom animations and scroll behaviors */
+html {
+  scroll-behavior: smooth;
+  background-color: #0a0b0d;
+}
+
+body {
+  color: #ffffff;
+  font-family: var(--font-sans);
+  overflow-x: hidden;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0a0b0d;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #272a31;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #3b494b;
+}
