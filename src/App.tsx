@@ -5,7 +5,7 @@ import Features from './components/Features';
 import HowItWorks from './components/HowItWorks';
 import Pricing from './components/Pricing';
 import Footer from './components/Footer';
-import DemoModal from './components/DemoModal';
+import Getstarted from './components/registration/Getstarted';
 import { ArrowLeft, Home, Sparkles } from 'lucide-react';
 
 export default function App() {
@@ -189,7 +189,7 @@ export default function App() {
       />
 
       {/* Glassmorphic Interaction Modal Overlay */}
-      <DemoModal 
+      <Getstarted
         isOpen={modalOpen} 
         onClose={() => setModalOpen(false)} 
         initialMode={modalMode} 
