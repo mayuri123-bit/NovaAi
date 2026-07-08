@@ -1,17 +1,17 @@
 import {useState} from "react";
-import Navbar from './components/Navbar';
-import Hero from './components/Hero';
-import Features from './components/Features';
-import HowItWorks from './components/HowItWorks';
-import Pricing from './components/Pricing';
-import Footer from './components/Footer';
+import Navbar from './components/Landing page/Navbar';
+import Hero from './components/Landing page/Hero';
+import Features from './components/Landing page/Features';
+import HowItWorks from './components/Landing page/HowItWorks';
+import Pricing from './components/Landing page/Pricing';
+import Footer from './components/Landing page/Footer';
 import Getstarted from './components/registration/Getstarted';
 import { ArrowLeft, Home, Sparkles } from 'lucide-react';
 
 export default function App() {
   const [currentView, setCurrentView] = useState<'home' | 'features' | 'how-it-works'>('home');
   const [modalOpen, setModalOpen] = useState(false);
-  const [modalMode, setModalMode] = useState<"Login" | "Signup" | "FreeTrial" | "ContactSales">("FreeTrial");
+  const [modalMode, setModalMode] = useState<"Login" | "Signup" | "FreeTrial" | "ContactSales" | "ChooseAccountType">("ChooseAccountType");
 
   const handleScrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
@@ -20,16 +20,8 @@ export default function App() {
     }
   };
 
-  const handleOpenDemo = (mode: string = "FreeTrial") => {
-    if (mode.includes("Sales")) {
-      setModalMode("ContactSales");
-    } else if (mode.includes("Login")) {
-      setModalMode("Login");
-    } else if (mode.includes("Basic")) {
-      setModalMode("Signup");
-    } else {
-      setModalMode("FreeTrial");
-    }
+  const handleOpenDemo = (_mode: string = "FreeTrial") => {
+    setModalMode("ChooseAccountType");
     setModalOpen(true);
   };
 

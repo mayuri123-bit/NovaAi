@@ -5,13 +5,14 @@ import { motion } from 'motion/react';
 // @ts-ignore
 import CustomerRegistration from './CustomerRegistration';
 import VendorRegistration from './VendorRegistration';
+import companyImg from "../../assets/images/companyImg.png";
+import customerImg from "../../assets/images/customerImg.png";
 
 interface GetstartedProps {
   isOpen: boolean;
   onClose: () => void;
   initialMode?: string; // "Login" | "Signup" | "FreeTrial" | "ContactSales"
 }
-
 export default function Getstarted({ isOpen, onClose, initialMode = "FreeTrial" }: GetstartedProps) {
   const [mode, setMode] = useState(initialMode);
   const [name, setName] = useState("");
