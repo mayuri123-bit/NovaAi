@@ -12,8 +12,9 @@ interface GetstartedProps {
   isOpen: boolean;
   onClose: () => void;
   initialMode?: string; // "Login" | "Signup" | "FreeTrial" | "ContactSales"
+  onCustomerRegistered?: (data: any) => void;
 }
-export default function Getstarted({ isOpen, onClose, initialMode = "FreeTrial" }: GetstartedProps) {
+export default function Getstarted({ isOpen, onClose, initialMode = "FreeTrial", onCustomerRegistered }: GetstartedProps) {
   const [mode, setMode] = useState(initialMode);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -210,6 +211,7 @@ export default function Getstarted({ isOpen, onClose, initialMode = "FreeTrial" 
         onClose={onClose}
         onSuccess={(data) => {
           console.log("Customer setup successfully:", data);
+          onCustomerRegistered?.(data);
           onClose();
         }}
         onSwitchToLogin={() => setMode("Login")}

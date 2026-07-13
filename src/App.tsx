@@ -6,12 +6,20 @@ import HowItWorks from './components/Landing page/HowItWorks';
 import Pricing from './components/Landing page/Pricing';
 import Footer from './components/Landing page/Footer';
 import Getstarted from './components/registration/Getstarted';
+import CustomerDashboard from './components/Dashboard/CustomerDashboard';
 import { ArrowLeft, Home, Sparkles } from 'lucide-react';
+
+type AuthUser = {
+  fullName: string;
+  email: string;
+  location: string;
+};
 
 export default function App() {
   const [currentView, setCurrentView] = useState<'home' | 'features' | 'how-it-works'>('home');
   const [modalOpen, setModalOpen] = useState(false);
   const [modalMode, setModalMode] = useState<"Login" | "Signup" | "FreeTrial" | "ContactSales" | "ChooseAccountType">("ChooseAccountType");
+  const [authUser, setAuthUser] = useState<AuthUser | null>(null);
 
   const handleScrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
@@ -24,6 +32,26 @@ export default function App() {
     setModalMode("ChooseAccountType");
     setModalOpen(true);
   };
+
+  const handleCustomerRegistered = (data: { fullName?: string; email?: string; location?: string }) => {
+    setAuthUser({
+      fullName: data.fullName || 'Customer',
+      email: data.email || '',
+      location: data.location || 'Your location',
+    });
+    setModalOpen(false);
+    setCurrentView('home');
+  };
+
+  const handleLogout = () => {
+    setAuthUser(null);
+    setModalOpen(false);
+    setCurrentView('home');
+  };
+
+  if (authUser) {
+    return <CustomerDashboard user={authUser} onLogout={handleLogout} />;
+  }
 
   return (
     <div className="bg-brand-black min-h-screen text-white font-sans antialiased overflow-x-hidden selection:bg-brand-cyan/30 selection:text-white">
@@ -184,7 +212,8 @@ export default function App() {
       <Getstarted
         isOpen={modalOpen} 
         onClose={() => setModalOpen(false)} 
-        initialMode={modalMode} 
+        initialMode={modalMode}
+        onCustomerRegistered={handleCustomerRegistered}
       />
     </div>
   );
