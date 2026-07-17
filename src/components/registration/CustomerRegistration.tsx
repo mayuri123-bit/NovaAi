@@ -19,7 +19,9 @@ export default function CustomerRegistration({
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [location, setLocation] = useState('');
+  const [city, setCity] = useState('');
+  const [stateName, setStateName] = useState('');
+  const location = city && stateName ? `${city}, ${stateName}` : (city || stateName);
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [isLocationFocused, setIsLocationFocused] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -228,24 +230,46 @@ export default function CustomerRegistration({
               </div>
             </div>
 
-            {/* Location with map hook */}
-            <div className="space-y-2">
-              <label className="text-xs font-semibold text-[#b9cacb] block" htmlFor="location">Solar Array Location</label>
-              <div className="relative">
-                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[#b9cacb] flex items-center justify-center">
-                  <MapPin className="w-[18px] h-[18px]" />
-                </span>
-                <input
-                  id="location"
-                  type="text"
-                  required
-                  placeholder="San Francisco, CA"
-                  value={location}
-                  onChange={(e) => setLocation(e.target.value)}
-                  onFocus={() => setIsLocationFocused(true)}
-                  onBlur={() => setIsLocationFocused(false)}
-                  className="w-full bg-[#0a0b0d]/80 border border-[#849495]/30 focus:border-[#00f0ff] focus:shadow-[0_0_12px_rgba(0,240,255,0.25)] rounded-xl py-3.5 pl-12 pr-4 text-sm text-white placeholder-[#849495]/40 transition-all duration-300 outline-none"
-                />
+            {/* Location: City and State (Separated, no Country option) */}
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <label className="text-xs font-semibold text-[#b9cacb] block" htmlFor="city">City</label>
+                <div className="relative">
+                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[#b9cacb] flex items-center justify-center">
+                    <MapPin className="w-[18px] h-[18px]" />
+                  </span>
+                  <input
+                    id="city"
+                    type="text"
+                    required
+                    placeholder="e.g. San Francisco"
+                    value={city}
+                    onChange={(e) => setCity(e.target.value)}
+                    onFocus={() => setIsLocationFocused(true)}
+                    onBlur={() => setIsLocationFocused(false)}
+                    className="w-full bg-[#0a0b0d]/80 border border-[#849495]/30 focus:border-[#00f0ff] focus:shadow-[0_0_12px_rgba(0,240,255,0.25)] rounded-xl py-3.5 pl-12 pr-4 text-sm text-white placeholder-[#849495]/40 transition-all duration-300 outline-none"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-xs font-semibold text-[#b9cacb] block" htmlFor="stateName">State</label>
+                <div className="relative">
+                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[#b9cacb] flex items-center justify-center">
+                    <MapPin className="w-[18px] h-[18px]" />
+                  </span>
+                  <input
+                    id="stateName"
+                    type="text"
+                    required
+                    placeholder="e.g. CA"
+                    value={stateName}
+                    onChange={(e) => setStateName(e.target.value)}
+                    onFocus={() => setIsLocationFocused(true)}
+                    onBlur={() => setIsLocationFocused(false)}
+                    className="w-full bg-[#0a0b0d]/80 border border-[#849495]/30 focus:border-[#00f0ff] focus:shadow-[0_0_12px_rgba(0,240,255,0.25)] rounded-xl py-3.5 pl-12 pr-4 text-sm text-white placeholder-[#849495]/40 transition-all duration-300 outline-none"
+                  />
+                </div>
               </div>
             </div>
 

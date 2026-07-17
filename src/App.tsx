@@ -6,7 +6,7 @@ import HowItWorks from './components/Landing page/HowItWorks';
 import Pricing from './components/Landing page/Pricing';
 import Footer from './components/Landing page/Footer';
 import Getstarted from './components/registration/Getstarted';
-import CustomerDashboard from './components/Dashboard/Customer Dashboard/CustomerDashboard';
+import CustomerDashboard from './components/dashboard/customer/CustomerDashboard';
 import { ArrowLeft, Home, Sparkles } from 'lucide-react';
 
 type AuthUser = {
