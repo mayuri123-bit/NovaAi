@@ -6,13 +6,15 @@ import HowItWorks from './components/Landing page/HowItWorks';
 import Pricing from './components/Landing page/Pricing';
 import Footer from './components/Landing page/Footer';
 import Getstarted from './components/registration/Getstarted';
-import CustomerDashboard from './components/dashboard/customer/CustomerDashboard';
+import CustomerDashboard from './components/dashboard/customer/modules/LearningHubTab';
+import VendorDashboard from './components/dashboard/vendor /VendorDashboard';
 import { ArrowLeft, Home, Sparkles } from 'lucide-react';
 
 type AuthUser = {
   fullName: string;
   email: string;
   location: string;
+  role?: 'customer' | 'vendor';
 };
 
 export default function App() {
@@ -38,6 +40,18 @@ export default function App() {
       fullName: data.fullName || 'Customer',
       email: data.email || '',
       location: data.location || 'Your location',
+      role: 'customer',
+    });
+    setModalOpen(false);
+    setCurrentView('home');
+  };
+
+  const handleVendorRegistered = (data: { fullName?: string; email?: string; location?: string; vendorName?: string; contactName?: string }) => {
+    setAuthUser({
+      fullName: data.contactName || data.fullName || data.vendorName || 'Vendor',
+      email: data.email || '',
+      location: data.location || 'Mumbai, MH',
+      role: 'vendor',
     });
     setModalOpen(false);
     setCurrentView('home');
@@ -50,6 +64,9 @@ export default function App() {
   };
 
   if (authUser) {
+    if (authUser.role === 'vendor') {
+      return <VendorDashboard user={authUser} onLogout={handleLogout} />;
+    }
     return <CustomerDashboard user={authUser} onLogout={handleLogout} />;
   }
 
@@ -214,6 +231,7 @@ export default function App() {
         onClose={() => setModalOpen(false)} 
         initialMode={modalMode}
         onCustomerRegistered={handleCustomerRegistered}
+        onVendorRegistered={handleVendorRegistered}
       />
     </div>
   );

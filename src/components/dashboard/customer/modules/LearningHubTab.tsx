@@ -29,7 +29,9 @@ import {
   HelpCircle,
   Clock,
   Menu,
-  X
+  X,
+  Pencil,
+  Upload
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import OverviewTab from './OverviewTab';
@@ -163,6 +165,17 @@ export default function CustomerDashboard({ user, onLogout }: CustomerDashboardP
   const finalCost = estimatedCost - subsidyAmount;
   const yearlySavings = monthlyBill * 12 * 0.90; // Assume 90% bill reduction
   const paybackYears = finalCost / yearlySavings;
+
+  const navIconMap: Record<string, React.ElementType> = {
+    dashboard: LayoutDashboard,
+    ai: Bot,
+    nearby: Map,
+    calculator: Calculator,
+    schemes: Building,
+    quotations: FileText,
+    vendors: Bookmark,
+    learning: BookOpen,
+  };
 
   const handleSendMessage = (e?: React.FormEvent, customText?: string) => {
     if (e) e.preventDefault();
@@ -383,37 +396,38 @@ export default function CustomerDashboard({ user, onLogout }: CustomerDashboardP
       <aside className="w-64 glass-panel border-r border-white/5 flex-col hidden lg:flex sticky top-0 h-screen z-40">
         <div className="p-6">
           <div className="font-headline-md text-2xl font-bold text-primary tracking-tighter flex items-center gap-2 mb-10 select-none">
-            <span className="material-symbols-outlined text-3xl text-primary neon-glow" style={{ fontVariationSettings: '"FILL" 1' }}>bolt</span>
+            <Zap className="w-7 h-7 text-primary neon-glow" />
             <span>NovaAI</span>
           </div>
 
           <nav className="space-y-1">
             {[
               { key: 'dashboard', label: 'Dashboard', icon: 'dashboard' },
-              { key: 'ai', label: 'AI Assistant', icon: 'smart_toy', isNew: true },
-              { key: 'nearby', label: 'Nearby Solar', icon: 'map' },
-              { key: 'calculator', label: 'Calculator', icon: 'calculate' },
-              { key: 'schemes', label: 'Gov Schemes', icon: 'account_balance' },
-              { key: 'quotations', label: 'Quotations', icon: 'request_quote' },
-              { key: 'vendors', label: 'Saved Vendors', icon: 'bookmarks' },
-              { key: 'learning', label: 'Learning Hub', icon: 'menu_book' },
+              { key: 'ai', label: 'AI Assistant', icon: 'ai', isNew: true },
+              { key: 'nearby', label: 'Nearby Solar', icon: 'nearby' },
+              { key: 'calculator', label: 'Calculator', icon: 'calculator' },
+              { key: 'schemes', label: 'Gov Schemes', icon: 'schemes' },
+              { key: 'quotations', label: 'Quotations', icon: 'quotations' },
+              { key: 'vendors', label: 'Saved Vendors', icon: 'vendors' },
+              { key: 'learning', label: 'Learning Hub', icon: 'learning' },
             ].map(item => {
               const isActive = activeTab === item.key;
+              const IconComponent = navIconMap[item.icon] || LayoutDashboard;
               return (
                 <button
                   key={item.key}
                   onClick={() => setActiveTab(item.key as any)}
-                  className={`w-full flex items-center justify-between px-6 py-3.5 transition-all text-left font-semibold text-sm cursor-pointer ${
+                  className={`w-full flex items-center justify-between px-6 py-3.5 transition-all text-left font-semibold text-sm cursor-pointer rounded-xl ${
                     isActive
                       ? 'sidebar-active text-[#00dbe9]'
                       : 'text-[#b9cacb] hover:bg-white/5 hover:text-white hover:translate-x-1'
                   }`}
                 >
-                  <div className="flex items-center gap-4">
-                    <span className="material-symbols-outlined" style={{ fontVariationSettings: isActive ? '"FILL" 1' : 'none' }}>
-                      {item.icon}
-                    </span>
-                    <span>{item.label}</span>
+                  <div className="flex items-center gap-4 min-w-0">
+                    <div className={`flex h-8 w-8 items-center justify-center rounded-lg ${isActive ? 'bg-[#00dbe9]/10' : 'bg-white/5'}`}>
+                      <IconComponent className={`w-5 h-5 ${isActive ? 'text-[#00dbe9]' : 'text-[#b9cacb]'}`} strokeWidth={1.8} />
+                    </div>
+                    <span className="truncate">{item.label}</span>
                   </div>
                   {item.isNew && (
                     <span className="bg-primary/20 text-primary text-[10px] px-1.5 py-0.5 rounded-md font-bold border border-primary/20">
@@ -431,14 +445,14 @@ export default function CustomerDashboard({ user, onLogout }: CustomerDashboardP
             onClick={() => setActiveTab('ai')}
             className="w-full flex items-center gap-4 px-6 py-3 text-[#b9cacb] hover:text-[#00dbe9] transition-all text-left text-sm cursor-pointer font-semibold"
           >
-            <span className="material-symbols-outlined">notifications</span>
+            <Bell className="w-5 h-5" strokeWidth={1.8} />
             <span>Notifications</span>
           </button>
           <button
             onClick={onLogout}
             className="w-full flex items-center gap-4 px-6 py-3 text-red-400/80 hover:text-red-400 transition-all text-left text-sm cursor-pointer font-semibold"
           >
-            <span className="material-symbols-outlined">logout</span>
+            <LogOut className="w-5 h-5" strokeWidth={1.8} />
             <span>Logout</span>
           </button>
         </div>
@@ -456,21 +470,17 @@ export default function CustomerDashboard({ user, onLogout }: CustomerDashboardP
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               className="p-2 rounded-lg bg-white/5 hover:bg-white/10 text-white cursor-pointer"
             >
-              <span className="material-symbols-outlined text-xl">
-                {mobileMenuOpen ? 'close' : 'menu'}
-              </span>
+              {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
             <div className="text-lg font-bold text-[#dbfcff] tracking-tighter flex items-center gap-1.5 select-none font-headline-md">
-              <span className="material-symbols-outlined text-primary neon-glow" style={{ fontVariationSettings: '"FILL" 1' }}>bolt</span>
+              <Zap className="w-5 h-5 text-primary neon-glow" />
               <span>NovaAI</span>
             </div>
           </div>
 
           <div className="flex-1 max-w-md hidden md:block">
             <div className="relative group">
-              <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-[#b9cacb] group-focus-within:text-[#00dbe9] transition-colors">
-                search
-              </span>
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#b9cacb] group-focus-within:text-[#00dbe9] transition-colors" />
               <input
                 type="text"
                 value={searchQuery}
@@ -489,7 +499,7 @@ export default function CustomerDashboard({ user, onLogout }: CustomerDashboardP
                 onClick={() => setShowNotifications(!showNotifications)}
                 className="relative w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-white/10 transition-all text-[#b9cacb] hover:text-[#00f2ff]"
               >
-                <span className="material-symbols-outlined">notifications</span>
+                <Bell className="w-5 h-5" strokeWidth={1.8} />
                 {notifications.some(n => n.active) && (
                   <span className="absolute top-2 right-2 w-2 h-2 bg-primary rounded-full shadow-[0_0_8px_#00dbe9]" />
                 )}
@@ -552,7 +562,7 @@ export default function CustomerDashboard({ user, onLogout }: CustomerDashboardP
                   </div>
                 )}
                 <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center rounded-full">
-                  <span className="material-symbols-outlined text-white text-sm">edit</span>
+                  <Pencil className="w-3.5 h-3.5 text-white" strokeWidth={2} />
                 </div>
               </div>
             </div>
@@ -571,15 +581,16 @@ export default function CustomerDashboard({ user, onLogout }: CustomerDashboardP
               <div className="space-y-2 mt-4">
                 {[
                   { key: 'dashboard', label: 'Dashboard', icon: 'dashboard' },
-                  { key: 'ai', label: 'AI Assistant', icon: 'smart_toy' },
-                  { key: 'nearby', label: 'Nearby Solar', icon: 'map' },
-                  { key: 'calculator', label: 'Calculator', icon: 'calculate' },
-                  { key: 'schemes', label: 'Gov Schemes', icon: 'account_balance' },
-                  { key: 'quotations', label: 'Quotations', icon: 'request_quote' },
-                  { key: 'vendors', label: 'Saved Vendors', icon: 'bookmarks' },
-                  { key: 'learning', label: 'Learning Hub', icon: 'menu_book' },
+                  { key: 'ai', label: 'AI Assistant', icon: 'ai' },
+                  { key: 'nearby', label: 'Nearby Solar', icon: 'nearby' },
+                  { key: 'calculator', label: 'Calculator', icon: 'calculator' },
+                  { key: 'schemes', label: 'Gov Schemes', icon: 'schemes' },
+                  { key: 'quotations', label: 'Quotations', icon: 'quotations' },
+                  { key: 'vendors', label: 'Saved Vendors', icon: 'vendors' },
+                  { key: 'learning', label: 'Learning Hub', icon: 'learning' },
                 ].map(item => {
                   const isActive = activeTab === item.key;
+                  const IconComponent = navIconMap[item.icon] || LayoutDashboard;
                   return (
                     <button
                       key={item.key}
@@ -593,9 +604,9 @@ export default function CustomerDashboard({ user, onLogout }: CustomerDashboardP
                           : 'text-[#b9cacb] hover:bg-white/5 hover:text-white'
                       }`}
                     >
-                      <span className="material-symbols-outlined">
-                        {item.icon}
-                      </span>
+                      <div className={`flex h-8 w-8 items-center justify-center rounded-lg ${isActive ? 'bg-[#00dbe9]/10' : 'bg-white/5'}`}>
+                        <IconComponent className={`w-5 h-5 ${isActive ? 'text-[#00dbe9]' : 'text-[#b9cacb]'}`} strokeWidth={1.8} />
+                      </div>
                       <span>{item.label}</span>
                     </button>
                   );
@@ -607,7 +618,7 @@ export default function CustomerDashboard({ user, onLogout }: CustomerDashboardP
                   onClick={onLogout}
                   className="w-full flex items-center gap-4 px-4 py-3 text-red-400/80 hover:text-red-400 font-semibold transition-all text-left text-sm"
                 >
-                  <span className="material-symbols-outlined">logout</span>
+                  <LogOut className="w-5 h-5" strokeWidth={1.8} />
                   <span>Logout</span>
                 </button>
               </div>
@@ -749,12 +760,13 @@ export default function CustomerDashboard({ user, onLogout }: CustomerDashboardP
       <nav className="lg:hidden fixed bottom-0 left-0 right-0 glass-panel border-t border-white/10 px-4 py-3 flex justify-between items-center z-40">
         {[
           { key: 'dashboard', label: 'Dash', icon: 'dashboard' },
-          { key: 'ai', label: 'AI', icon: 'smart_toy' },
-          { key: 'nearby', label: 'Solar', icon: 'map' },
-          { key: 'calculator', label: 'Calc', icon: 'calculate' },
-          { key: 'learning', label: 'Hub', icon: 'menu_book' }
+          { key: 'ai', label: 'AI', icon: 'ai' },
+          { key: 'nearby', label: 'Solar', icon: 'nearby' },
+          { key: 'calculator', label: 'Calc', icon: 'calculator' },
+          { key: 'learning', label: 'Hub', icon: 'learning' }
         ].map(item => {
           const isActive = activeTab === item.key;
+          const IconComponent = navIconMap[item.icon] || LayoutDashboard;
           return (
             <button
               key={item.key}
@@ -763,9 +775,7 @@ export default function CustomerDashboard({ user, onLogout }: CustomerDashboardP
                 isActive ? 'text-primary' : 'text-[#b9cacb]'
               }`}
             >
-              <span className="material-symbols-outlined text-xl" style={{ fontVariationSettings: isActive ? '"FILL" 1' : 'none' }}>
-                {item.icon}
-              </span>
+              <IconComponent className={`w-5 h-5 ${isActive ? 'text-[#00dbe9]' : 'text-[#b9cacb]'}`} strokeWidth={1.8} />
               <span className="text-[10px] font-bold uppercase tracking-wider">{item.label}</span>
             </button>
           );
@@ -813,13 +823,13 @@ export default function CustomerDashboard({ user, onLogout }: CustomerDashboardP
                 onClick={() => setShowProfileModal(false)}
                 className="absolute top-6 right-6 text-[#b9cacb] hover:text-white p-1 rounded-full bg-white/5 border border-white/5 transition-all cursor-pointer"
               >
-                <span className="material-symbols-outlined text-sm">close</span>
+                <X className="w-4 h-4" />
               </button>
 
               <div className="space-y-6 text-left">
                 <div>
                   <h3 className="text-2xl font-bold text-white flex items-center gap-2">
-                    <span className="material-symbols-outlined text-[#00dbe9]">account_circle</span>
+                    <User className="w-5 h-5 text-[#00dbe9]" />
                     Profile Settings
                   </h3>
                   <p className="text-xs text-[#b9cacb] mt-1">Configure your personal solar profile details and display picture.</p>
@@ -868,9 +878,7 @@ export default function CustomerDashboard({ user, onLogout }: CustomerDashboardP
                           onChange={handleFileChange}
                           className="absolute inset-0 opacity-0 cursor-pointer w-full h-full z-10"
                         />
-                        <span className="material-symbols-outlined text-2xl text-[#b9cacb] group-hover:text-[#00dbe9] transition-colors">
-                          cloud_upload
-                        </span>
+                        <Upload className="w-6 h-6 text-[#b9cacb] group-hover:text-[#00dbe9] transition-colors" />
                         <p className="text-xs text-[#b9cacb] mt-1 font-semibold">
                           Upload custom photo
                         </p>

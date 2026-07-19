@@ -1,4 +1,5 @@
 import React from 'react';
+import { ArrowRight, BadgeCheck, Bot, Bookmark, Building2, Calculator, FileText, Grid2x2, Map, Sparkles, Store, SunMedium, Wallet, Zap } from 'lucide-react';
 
 interface OverviewTabUser {
   fullName: string;
@@ -55,7 +56,7 @@ export default function OverviewTab({
               referrerPolicy="no-referrer"
             />
             <div className="absolute bottom-4 right-4 z-20 glass-panel px-4 py-2 rounded-lg flex items-center gap-2 border-primary/30">
-              <span className="material-symbols-outlined text-primary neon-glow" style={{ fontVariationSettings: '"FILL" 1' }}>bolt</span>
+              <Zap className="w-4 h-4 text-primary neon-glow" />
               <span className="font-label-md text-xs font-bold text-white">{calculatedCapacity.toFixed(1)} kW Active</span>
             </div>
           </div>
@@ -66,7 +67,7 @@ export default function OverviewTab({
       <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <div className="premium-card rounded-2xl space-y-6 reveal-item p-8 hover:scale-105 transition-all text-left" style={{ animationDelay: '0.2s' }}>
           <div className="flex justify-between items-start">
-            <span className="material-symbols-outlined text-primary text-3xl neon-glow">savings</span>
+            <Wallet className="w-7 h-7 text-primary neon-glow" />
             <div className="text-right">
               <div className="text-primary-fixed-dim font-label-sm text-xs font-bold text-[#7df4ff]">+12% vs last mo</div>
               <svg className="w-20 h-8 mt-1 text-primary/50" viewBox="0 0 100 40">
@@ -82,7 +83,7 @@ export default function OverviewTab({
 
         <div className="premium-card rounded-2xl space-y-6 reveal-item p-8 hover:scale-105 transition-all text-left" style={{ animationDelay: '0.3s' }}>
           <div className="flex justify-between items-start">
-            <span className="material-symbols-outlined text-secondary text-3xl neon-glow">solar_power</span>
+            <SunMedium className="w-7 h-7 text-secondary neon-glow" />
             <div className="text-right">
               <div className="text-secondary font-label-sm text-xs font-bold text-secondary">Perfect Fit</div>
               <svg className="w-20 h-8 mt-1 text-secondary/50" viewBox="0 0 100 40">
@@ -98,7 +99,7 @@ export default function OverviewTab({
 
         <div className="premium-card rounded-2xl space-y-6 reveal-item p-8 hover:scale-105 transition-all text-left" style={{ animationDelay: '0.5s' }}>
           <div className="flex justify-between items-start">
-            <span className="material-symbols-outlined text-primary-container text-3xl neon-glow">verified</span>
+            <BadgeCheck className="w-7 h-7 text-primary-container neon-glow" />
             <span className="text-primary-container font-label-sm text-xs font-bold text-[#00f0ff]">Available Now</span>
           </div>
           <div>
@@ -115,7 +116,7 @@ export default function OverviewTab({
           {/* Main Tools Grid */}
           <section>
             <h2 className="text-2xl font-bold mb-6 flex items-center gap-3 text-white reveal-item">
-              <span className="material-symbols-outlined text-primary text-2xl">grid_view</span>
+              <Grid2x2 className="w-6 h-6 text-primary" />
               Main Tools
             </h2>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
@@ -133,7 +134,12 @@ export default function OverviewTab({
                   className="premium-card rounded-2xl group flex flex-col items-center justify-center text-center space-y-3 reveal-item intelligence-card cursor-pointer"
                 >
                   <div className={`w-20 h-20 rounded-xl ${tool.colorClass} flex items-center justify-center transition-transform icon-float`} style={{ animationDelay: tool.animDelay }}>
-                    <span className="material-symbols-outlined text-5xl neon-glow">{tool.icon}</span>
+                    {tool.key === 'ai' ? <Bot className="w-8 h-8 text-primary neon-glow" /> : null}
+                    {tool.key === 'nearby' ? <Map className="w-8 h-8 text-secondary neon-glow" /> : null}
+                    {tool.key === 'calculator' ? <Calculator className="w-8 h-8 text-primary neon-glow" /> : null}
+                    {tool.key === 'schemes' ? <Building2 className="w-8 h-8 text-tertiary-fixed-dim neon-glow" /> : null}
+                    {tool.key === 'quotations' ? <FileText className="w-8 h-8 text-primary-fixed-dim neon-glow" /> : null}
+                    {tool.key === 'vendors' ? <Bookmark className="w-8 h-8 text-on-surface-variant neon-glow" /> : null}
                   </div>
                   <span className="font-label-md font-bold text-on-surface text-lg">{tool.label}</span>
                 </button>
@@ -145,7 +151,7 @@ export default function OverviewTab({
           <section className="reveal-item" style={{ animationDelay: '1s' }}>
             <div className="flex justify-between items-end mb-8">
               <h2 className="text-2xl font-bold flex items-center gap-3 text-white">
-                <span className="material-symbols-outlined text-primary text-2xl">storefront</span>
+                <Store className="w-6 h-6 text-primary" />
                 Best Local Experts
               </h2>
               <button 
@@ -153,12 +159,12 @@ export default function OverviewTab({
                 className="text-primary font-label-md text-sm flex items-center gap-2 hover:underline font-bold bg-transparent border-none cursor-pointer"
               >
                 Explore all
-                <span className="material-symbols-outlined text-sm">arrow_forward</span>
+                <ArrowRight className="w-4 h-4" />
               </button>
             </div>
             <div className="premium-card p-10 rounded-2xl flex flex-col items-center justify-center min-h-[300px] border-dashed border-white/10 group text-center">
               <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                <span className="material-symbols-outlined text-on-surface-variant text-4xl">inventory_2</span>
+                <Store className="w-8 h-8 text-on-surface-variant" />
               </div>
               <p className="text-on-surface-variant text-base font-medium">Discover top-rated verified solar professionals in your area.</p>
               <button 
@@ -176,7 +182,7 @@ export default function OverviewTab({
           {/* AI Insight Panel */}
           <div className="premium-card p-8 rounded-2xl border-primary/30 relative overflow-hidden reveal-item text-left" style={{ animationDelay: '0.8s' }}>
             <div className="absolute top-0 right-0 p-4">
-              <span className="material-symbols-outlined text-primary/40 animate-pulse">auto_awesome</span>
+              <Sparkles className="w-6 h-6 text-primary/40 animate-pulse" />
             </div>
             <h3 className="text-xl mb-4 flex items-center gap-2 font-bold text-white">
               AI Assistant Tip
@@ -232,14 +238,14 @@ export default function OverviewTab({
                 onClick={() => setActiveTab('schemes')}
                 className="flex items-start gap-3 group cursor-pointer"
               >
-                <span className="material-symbols-outlined text-primary text-sm mt-1 group-hover:translate-x-1 transition-transform">article</span>
+                <FileText className="w-4 h-4 text-primary mt-1 group-hover:translate-x-1 transition-transform" />
                 <span className="text-sm text-white/90 group-hover:text-primary font-semibold transition-colors">Net Metering Policy 2026</span>
               </li>
               <li 
                 onClick={() => setActiveTab('schemes')}
                 className="flex items-start gap-3 group cursor-pointer"
               >
-                <span className="material-symbols-outlined text-primary text-sm mt-1 group-hover:translate-x-1 transition-transform">article</span>
+                <FileText className="w-4 h-4 text-primary mt-1 group-hover:translate-x-1 transition-transform" />
                 <span className="text-sm text-white/90 group-hover:text-primary font-semibold transition-colors">Federal Solar Tax Credit FAQ</span>
               </li>
             </ul>

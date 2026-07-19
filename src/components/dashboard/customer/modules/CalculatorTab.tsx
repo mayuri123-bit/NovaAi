@@ -16,7 +16,7 @@ export default function CalculatorTab({
 }: CalculatorTabProps) {
   // Initialize with the current bill value converted to Rupees, or blank
   const [billVal, setBillVal] = useState<string>(
-    monthlyBill ? Math.round(monthlyBill * 83).toString() : ''
+    monthlyBill ? Math.round(monthlyBill * 83).toString() : '0'
   );
   
   const [showResults, setShowResults] = useState(false);

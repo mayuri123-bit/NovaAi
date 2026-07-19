@@ -19,6 +19,7 @@ export default function VendorRegistration({
   const [regId, setRegId] = useState('');
   const [contactName, setContactName] = useState('');
   const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
 
@@ -52,8 +53,22 @@ export default function VendorRegistration({
     setTimeout(() => {
       setIsSubmitting(false);
       setIsSuccess(true);
+
+      const registeredUsers = JSON.parse(localStorage.getItem('nova_registered_users') || '[]');
+      const filteredUsers = registeredUsers.filter((u: any) => u.email.toLowerCase() !== email.toLowerCase());
+      filteredUsers.push({
+        fullName: contactName || vendorName || 'Vendor',
+        companyName: vendorName,
+        regId,
+        email,
+        password,
+        location: 'Mumbai, MH',
+        role: 'vendor'
+      });
+      localStorage.setItem('nova_registered_users', JSON.stringify(filteredUsers));
+
       setTimeout(() => {
-        onSuccess({ vendorName, regId, contactName, email });
+        onSuccess({ vendorName, regId, contactName, email, password });
       }, 1500);
     }, 2000);
   };

@@ -13,14 +13,16 @@ interface GetstartedProps {
   onClose: () => void;
   initialMode?: string; // "Login" | "Signup" | "FreeTrial" | "ContactSales"
   onCustomerRegistered?: (data: any) => void;
+  onVendorRegistered?: (data: any) => void;
 }
-export default function Getstarted({ isOpen, onClose, initialMode = "FreeTrial", onCustomerRegistered }: GetstartedProps) {
+export default function Getstarted({ isOpen, onClose, initialMode = "FreeTrial", onCustomerRegistered, onVendorRegistered }: GetstartedProps) {
   const [mode, setMode] = useState(initialMode);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [company, setCompany] = useState("");
   const [formSubmitted, setFormSubmitted] = useState(false);
+  const [loginError, setLoginError] = useState("");
 
   useEffect(() => {
     if (initialMode === "Signup") {
@@ -29,6 +31,7 @@ export default function Getstarted({ isOpen, onClose, initialMode = "FreeTrial",
       setMode(initialMode);
     }
     setFormSubmitted(false);
+    setLoginError("");
     // Reset form fields
     setName("");
     setEmail("");
@@ -226,6 +229,7 @@ export default function Getstarted({ isOpen, onClose, initialMode = "FreeTrial",
         onClose={onClose}
         onSuccess={(data) => {
           console.log("Vendor setup successfully:", data);
+          onVendorRegistered?.(data);
           onClose();
         }}
         onSwitchToLogin={() => setMode("Login")}
@@ -236,6 +240,34 @@ export default function Getstarted({ isOpen, onClose, initialMode = "FreeTrial",
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (mode === "Login") {
+      const registeredUsers = JSON.parse(localStorage.getItem('nova_registered_users') || '[]');
+      const matchedUser = registeredUsers.find((user: any) =>
+        user.email?.toLowerCase() === email.trim().toLowerCase() && user.password === password
+      );
+
+      if (!matchedUser) {
+        setLoginError('No account found for that email and password.');
+        return;
+      }
+
+      const authData = {
+        fullName: matchedUser.fullName || matchedUser.contactName || matchedUser.companyName || matchedUser.vendorName || 'User',
+        email: matchedUser.email,
+        location: matchedUser.location || 'Your location',
+        role: matchedUser.role === 'vendor' ? 'vendor' : 'customer',
+      };
+
+      if (matchedUser.role === 'vendor') {
+        onVendorRegistered?.(authData);
+      } else {
+        onCustomerRegistered?.(authData);
+      }
+      onClose();
+      return;
+    }
+
     setFormSubmitted(true);
   };
 
@@ -387,6 +419,10 @@ export default function Getstarted({ isOpen, onClose, initialMode = "FreeTrial",
                 </div>
               )}
             </div>
+
+            {mode === "Login" && loginError && (
+              <p className="text-sm text-red-400">{loginError}</p>
+            )}
 
             {/* CTA button */}
             <button 
