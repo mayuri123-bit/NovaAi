@@ -7,7 +7,7 @@ import Pricing from './components/Landing page/Pricing';
 import Footer from './components/Landing page/Footer';
 import Getstarted from './components/registration/Getstarted';
 import CustomerDashboard from './components/dashboard/customer/modules/LearningHubTab';
-import VendorDashboard from './components/dashboard/vendor /VendorDashboard';
+import VendorDashboard from './components/dashboard/vendor/VendorDashboard';
 import { ArrowLeft, Home, Sparkles } from 'lucide-react';
 
 type AuthUser = {

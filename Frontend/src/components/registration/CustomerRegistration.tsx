@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { X, User, Mail, Lock, Eye, EyeOff, MapPin, ShieldCheck, Shield, Zap, Sparkles, ArrowLeft } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import axios from "axios";
 
 interface CustomerRegistrationProps {
   onClose: () => void;
@@ -45,20 +46,57 @@ export default function CustomerRegistration({
     return strength; // returns 1, 2, 3, or 4
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+
+const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!termsAccepted) return;
+
+    if (!termsAccepted) {
+        alert("Please accept Terms & Conditions");
+        return;
+    }
+
     setIsSubmitting(true);
 
-    setTimeout(() => {
-      setIsSubmitting(false);
-      setIsSuccess(true);
-      setTimeout(() => {
-        onSuccess({ fullName, email, location });
-      }, 1500);
-    }, 2000);
-  };
+    try {
 
+        const response = await axios.post(
+            "http://127.0.0.1:8000/register",
+            {
+                name: fullName,
+                email: email,
+                password: password,
+                role: "customer"
+            }
+        );
+
+        console.log(response.data);
+
+        setIsSubmitting(false);
+        setIsSuccess(true);
+
+        setTimeout(() => {
+
+            onSuccess({
+                fullName,
+                email,
+                location
+            });
+
+        }, 1000);
+
+    } catch (error: any) {
+
+        setIsSubmitting(false);
+
+        if (error.response) {
+            alert(error.response.data.detail);
+        } else {
+            alert("Cannot connect to backend.");
+        }
+
+        console.error(error);
+    }
+};
   const strength = getPasswordStrength();
 
   return (
