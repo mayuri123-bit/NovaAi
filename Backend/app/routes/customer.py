@@ -25,3 +25,17 @@ def request_quotation(data: QuotationRequest, db: Session = Depends(get_db)):
     return {
         "message": "Quotation Requested Successfully"
     }
+#My quotation send to vendor
+from fastapi import Query
+
+@router.get("/my-quotations")
+def my_quotations(
+    email: str = Query(...),
+    db: Session = Depends(get_db)
+):
+
+    quotations = db.query(Quotation).filter(
+        Quotation.customer_email == email
+    ).all()
+
+    return quotations

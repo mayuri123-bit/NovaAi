@@ -17,3 +17,6 @@ class QuotationRequest(BaseModel):
     mobile: str
     address: str
     solar_capacity: str
+
+class UpdateQuotationStatus(BaseModel):
+    status: str

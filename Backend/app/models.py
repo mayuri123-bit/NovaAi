@@ -27,3 +27,4 @@ class Quotation(Base):
     address = Column(String(255), nullable=False)
     solar_capacity = Column(String(50), nullable=False)
     status = Column(String(20), default="Pending")
+
