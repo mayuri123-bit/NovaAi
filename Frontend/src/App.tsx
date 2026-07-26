@@ -230,9 +230,15 @@ export default function App() {
         isOpen={modalOpen} 
         onClose={() => setModalOpen(false)} 
         initialMode={modalMode}
-        onCustomerRegistered={handleCustomerRegistered}
-        onVendorRegistered={handleVendorRegistered}
+        onCustomerSuccess={(data) => {
+          if (data.role === 'vendor') {
+            handleVendorRegistered(data);
+          } else {
+            handleCustomerRegistered(data);
+          }
+        }}
       />
+      
     </div>
   );
 }

@@ -1,28 +1,31 @@
 import React, { useState, useEffect } from 'react';
 import { X, Check, ArrowRight, ShieldCheck, Sparkles, Building2, User, KeyRound, ArrowLeft, Mail } from 'lucide-react';
 import { motion } from 'motion/react';
-// @ts-ignore
-// @ts-ignore
 import CustomerRegistration from './CustomerRegistration';
 import VendorRegistration from './VendorRegistration';
-import companyImg from "../../../assets/images/companyImg.png";
-import customerImg from "../../../assets/images/customerImg.png";
 
-interface GetstartedProps {
+interface DemoModalProps {
   isOpen: boolean;
   onClose: () => void;
   initialMode?: string; // "Login" | "Signup" | "FreeTrial" | "ContactSales"
-  onCustomerRegistered?: (data: any) => void;
-  onVendorRegistered?: (data: any) => void;
+  onCustomerSuccess?: (data: { fullName: string; email: string; location: string; role?: 'customer' | 'vendor' }) => void;
 }
-export default function Getstarted({ isOpen, onClose, initialMode = "FreeTrial", onCustomerRegistered, onVendorRegistered }: GetstartedProps) {
+
+export default function DemoModal({ isOpen, onClose, initialMode = "FreeTrial", onCustomerSuccess }: DemoModalProps) {
   const [mode, setMode] = useState(initialMode);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [company, setCompany] = useState("");
   const [formSubmitted, setFormSubmitted] = useState(false);
-  const [loginError, setLoginError] = useState("");
+  const [loginRole, setLoginRole] = useState<'customer' | 'vendor'>('customer');
+  const [error, setError] = useState<string | null>(null);
+  const [resetSuccess, setResetSuccess] = useState(false);
+
+  useEffect(() => {
+    setError(null);
+    setResetSuccess(false);
+  }, [mode, loginRole]);
 
   useEffect(() => {
     if (initialMode === "Signup") {
@@ -31,7 +34,7 @@ export default function Getstarted({ isOpen, onClose, initialMode = "FreeTrial",
       setMode(initialMode);
     }
     setFormSubmitted(false);
-    setLoginError("");
+    setError(null);
     // Reset form fields
     setName("");
     setEmail("");
@@ -119,7 +122,7 @@ export default function Getstarted({ isOpen, onClose, initialMode = "FreeTrial",
                   {/* Image Frame */}
                   <div className="relative aspect-square rounded-2xl overflow-hidden mb-6 border border-white/5 bg-brand-black/40">
                     <img 
-                      src={customerImg} 
+                      src={new URL('../../../assets/images/customerImg.png', import.meta.url).href} 
                       alt="Customer Holographic System" 
                       className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-700"
                       referrerPolicy="no-referrer"
@@ -165,7 +168,7 @@ export default function Getstarted({ isOpen, onClose, initialMode = "FreeTrial",
                   {/* Image Frame */}
                   <div className="relative aspect-square rounded-2xl overflow-hidden mb-6 border border-white/5 bg-brand-black/40">
                     <img 
-                      src={companyImg} 
+                      src={new URL('../../../assets/images/companyImg.png', import.meta.url).href} 
                       alt="Solar Vendor Enterprise Hub" 
                       className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-700"
                       referrerPolicy="no-referrer"
@@ -214,10 +217,20 @@ export default function Getstarted({ isOpen, onClose, initialMode = "FreeTrial",
         onClose={onClose}
         onSuccess={(data) => {
           console.log("Customer setup successfully:", data);
-          onCustomerRegistered?.(data);
+          if (onCustomerSuccess) {
+            onCustomerSuccess({
+              fullName: data.fullName || "Alex Johnson",
+              email: data.email || "alex@example.com",
+              location: data.location || "San Francisco, CA",
+              role: 'customer'
+            });
+          }
           onClose();
         }}
-        onSwitchToLogin={() => setMode("Login")}
+        onSwitchToLogin={() => {
+          setLoginRole('customer');
+          setMode("Login");
+        }}
         onBackToPaths={() => setMode("ChooseAccountType")}
       />
     );
@@ -229,10 +242,20 @@ export default function Getstarted({ isOpen, onClose, initialMode = "FreeTrial",
         onClose={onClose}
         onSuccess={(data) => {
           console.log("Vendor setup successfully:", data);
-          onVendorRegistered?.(data);
+          if (onCustomerSuccess) {
+            onCustomerSuccess({
+              fullName: data.contactName || data.vendorName || "Helios Solar Dynamics",
+              email: data.email || "vendor@example.com",
+              location: "Mumbai, MH",
+              role: 'vendor'
+            });
+          }
           onClose();
         }}
-        onSwitchToLogin={() => setMode("Login")}
+        onSwitchToLogin={() => {
+          setLoginRole('vendor');
+          setMode("Login");
+        }}
         onBackToPaths={() => setMode("ChooseAccountType")}
       />
     );
@@ -240,32 +263,58 @@ export default function Getstarted({ isOpen, onClose, initialMode = "FreeTrial",
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    setError(null);
+
+    if (mode === "ForgotPassword") {
+      if (!email) {
+        setError("Please enter your registered email address.");
+        return;
+      }
+      const registeredUsers = JSON.parse(localStorage.getItem('nova_registered_users') || '[]');
+      const userIndex = registeredUsers.findIndex(
+        (u: any) => u.email.toLowerCase() === email.toLowerCase() && u.role === loginRole
+      );
+
+      if (userIndex !== -1) {
+        if (password) {
+          registeredUsers[userIndex].password = password;
+          localStorage.setItem('nova_registered_users', JSON.stringify(registeredUsers));
+        }
+      } else {
+        // Register user with new reset password
+        registeredUsers.push({
+          fullName: loginRole === 'vendor' ? 'Helios Solar Dynamics' : 'Customer User',
+          email,
+          password: password || 'password123',
+          location: loginRole === 'vendor' ? 'Mumbai, MH' : 'Delhi, IN',
+          role: loginRole
+        });
+        localStorage.setItem('nova_registered_users', JSON.stringify(registeredUsers));
+      }
+
+      setResetSuccess(true);
+      return;
+    }
 
     if (mode === "Login") {
       const registeredUsers = JSON.parse(localStorage.getItem('nova_registered_users') || '[]');
-      const matchedUser = registeredUsers.find((user: any) =>
-        user.email?.toLowerCase() === email.trim().toLowerCase() && user.password === password
+      const foundUser = registeredUsers.find(
+        (u: any) => u.email.toLowerCase() === email.toLowerCase() && u.role === loginRole
       );
 
-      if (!matchedUser) {
-        setLoginError('No account found for that email and password.');
-        return;
-      }
-
-      const authData = {
-        fullName: matchedUser.fullName || matchedUser.contactName || matchedUser.companyName || matchedUser.vendorName || 'User',
-        email: matchedUser.email,
-        location: matchedUser.location || 'Your location',
-        role: matchedUser.role === 'vendor' ? 'vendor' : 'customer',
-      };
-
-      if (matchedUser.role === 'vendor') {
-        onVendorRegistered?.(authData);
+      if (foundUser) {
+        if (foundUser.password && foundUser.password !== password) {
+          setError("Incorrect password. Please verify your credentials.");
+          return;
+        }
+        // Match registration details
+        setName(foundUser.fullName || foundUser.companyName || "");
+        setEmail(foundUser.email);
+        setCompany(foundUser.companyName || "");
       } else {
-        onCustomerRegistered?.(authData);
+        // Fallback demo credentials
+        setName(loginRole === 'vendor' ? "Helios Solar Dynamics" : "Alex Johnson");
       }
-      onClose();
-      return;
     }
 
     setFormSubmitted(true);
@@ -309,7 +358,17 @@ export default function Getstarted({ isOpen, onClose, initialMode = "FreeTrial",
               <span>ONLINE / 100% SECURE</span>
             </div>
             <button 
-              onClick={onClose}
+              onClick={() => {
+                if (onCustomerSuccess) {
+                  onCustomerSuccess({
+                    fullName: name || (loginRole === 'vendor' ? "Helios Solar Dynamics" : "Alex Johnson"),
+                    email: email || (loginRole === 'vendor' ? "vendor@example.com" : "alex@example.com"),
+                    location: loginRole === 'vendor' ? "Mumbai, MH" : "San Francisco, CA",
+                    role: loginRole
+                  });
+                }
+                onClose();
+              }}
               className="w-full py-3.5 bg-brand-cyan text-brand-black font-bold rounded-xl hover:brightness-110 active:scale-95 transition-all cursor-pointer border-none"
             >
               Access Dashboard
@@ -335,6 +394,7 @@ export default function Getstarted({ isOpen, onClose, initialMode = "FreeTrial",
               </span>
               <h3 className="text-2xl font-bold text-white">
                 {mode === "Login" && "Login to NovaAI"}
+                {mode === "ForgotPassword" && "Reset Password"}
                 {mode === "CustomerSignup" && "Customer Registration"}
                 {mode === "SolarCompanySignup" && "Solar Company Registration"}
                 {mode === "FreeTrial" && "Start Pro 14-Day Free Trial"}
@@ -345,123 +405,210 @@ export default function Getstarted({ isOpen, onClose, initialMode = "FreeTrial",
                 {mode === "SolarCompanySignup" && "Register your enterprise portfolio and developer APIs."}
                 {mode === "ContactSales" && "Reach our grid-infrastructure specialists to customize API configurations."}
                 {mode === "Login" && "Configure your solar portfolio and deploy deep AI mapping models."}
+                {mode === "ForgotPassword" && "Enter your registered email address and set a new password."}
                 {mode === "FreeTrial" && "Configure your solar portfolio and deploy deep AI mapping models."}
               </p>
+              {error && (
+                <div className="bg-red-500/10 border border-red-500/30 text-red-400 text-xs font-semibold p-3.5 rounded-xl animate-pulse mt-3 text-left">
+                  {error}
+                </div>
+              )}
             </div>
 
-            {/* Modal Input Fields */}
-            <div className="space-y-4">
-              {(mode === "CustomerSignup" || mode === "SolarCompanySignup" || mode === "FreeTrial" || mode === "ContactSales") && (
-                <div className="relative">
-                  <User className="absolute left-4 top-3.5 w-5 h-5 text-brand-gray" />
-                  <input 
-                    type="text" 
-                    placeholder={mode === "SolarCompanySignup" ? "Representative Name" : "Full Name"} 
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    required
-                    className="w-full bg-brand-black/60 border border-white/10 rounded-xl py-3.5 pl-12 pr-4 text-sm text-white placeholder-brand-gray focus:outline-none focus:ring-1 focus:ring-brand-cyan focus:border-brand-cyan transition-all"
-                  />
+            {resetSuccess ? (
+              <div className="text-center py-6 space-y-5">
+                <div className="w-14 h-14 bg-emerald-500/10 border border-emerald-500/30 rounded-full flex items-center justify-center mx-auto shadow-[0_0_20px_rgba(16,185,129,0.2)]">
+                  <ShieldCheck className="w-7 h-7 text-emerald-400" />
                 </div>
-              )}
-
-              {mode === "SolarCompanySignup" && (
-                <div className="relative">
-                  <Building2 className="absolute left-4 top-3.5 w-5 h-5 text-brand-gray" />
-                  <input 
-                    type="text" 
-                    placeholder="Company Name" 
-                    value={company}
-                    onChange={(e) => setCompany(e.target.value)}
-                    required
-                    className="w-full bg-brand-black/60 border border-white/10 rounded-xl py-3.5 pl-12 pr-4 text-sm text-white placeholder-brand-gray focus:outline-none focus:ring-1 focus:ring-brand-cyan focus:border-brand-cyan transition-all"
-                  />
+                <div className="space-y-1.5">
+                  <h4 className="text-xl font-bold text-white">Password Updated Successfully!</h4>
+                  <p className="text-brand-gray text-xs max-w-sm mx-auto leading-relaxed">
+                    Your password for <span className="text-brand-cyan font-mono">{email}</span> has been updated. You can now log in using your new credentials.
+                  </p>
                 </div>
-              )}
-
-              <div className="relative">
-                <Mail className="absolute left-4 top-3.5 w-5 h-5 text-brand-gray" />
-                <input 
-                  type="email" 
-                  placeholder={mode === "SolarCompanySignup" ? "Company Email Address" : "Email Address"} 
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                  className="w-full bg-brand-black/60 border border-white/10 rounded-xl py-3.5 pl-12 pr-4 text-sm text-white placeholder-brand-gray focus:outline-none focus:ring-1 focus:ring-brand-cyan focus:border-brand-cyan transition-all"
-                />
+                <button
+                  type="button"
+                  onClick={() => {
+                    setResetSuccess(false);
+                    setMode("Login");
+                  }}
+                  className="w-full py-3.5 bg-brand-cyan text-brand-black font-bold rounded-xl hover:brightness-110 active:scale-95 transition-all cursor-pointer border-none"
+                >
+                  Proceed to Login
+                </button>
               </div>
+            ) : (
+              <>
+                {(mode === "Login" || mode === "ForgotPassword") && (
+                  <div className="flex bg-black/40 border border-white/10 p-1 rounded-xl">
+                    <button
+                      type="button"
+                      onClick={() => setLoginRole('customer')}
+                      className={`flex-1 py-2.5 text-xs font-bold rounded-lg transition-all border-none cursor-pointer ${
+                        loginRole === 'customer'
+                          ? 'bg-brand-cyan text-brand-black shadow-md'
+                          : 'text-brand-gray hover:text-white bg-transparent'
+                      }`}
+                    >
+                      Customer {mode === "ForgotPassword" ? "Account" : "Login"}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setLoginRole('vendor')}
+                      className={`flex-1 py-2.5 text-xs font-bold rounded-lg transition-all border-none cursor-pointer ${
+                        loginRole === 'vendor'
+                          ? 'bg-brand-cyan text-brand-black shadow-md'
+                          : 'text-brand-gray hover:text-white bg-transparent'
+                      }`}
+                    >
+                      Vendor {mode === "ForgotPassword" ? "Account" : "Login"}
+                    </button>
+                  </div>
+                )}
 
-              {mode === "ContactSales" && (
-                <div className="relative">
-                  <Building2 className="absolute left-4 top-3.5 w-5 h-5 text-brand-gray" />
-                  <input 
-                    type="text" 
-                    placeholder="Company Name" 
-                    value={company}
-                    onChange={(e) => setCompany(e.target.value)}
-                    required
-                    className="w-full bg-brand-black/60 border border-white/10 rounded-xl py-3.5 pl-12 pr-4 text-sm text-white placeholder-brand-gray focus:outline-none focus:ring-1 focus:ring-brand-cyan focus:border-brand-cyan transition-all"
-                  />
+                {/* Modal Input Fields */}
+                <div className="space-y-4">
+                  {(mode === "CustomerSignup" || mode === "SolarCompanySignup" || mode === "FreeTrial" || mode === "ContactSales") && (
+                    <div className="relative">
+                      <User className="absolute left-4 top-3.5 w-5 h-5 text-brand-gray" />
+                      <input 
+                        type="text" 
+                        placeholder={mode === "SolarCompanySignup" ? "Representative Name" : "Full Name"} 
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        required
+                        className="w-full bg-brand-black/60 border border-white/10 rounded-xl py-3.5 pl-12 pr-4 text-sm text-white placeholder-brand-gray focus:outline-none focus:ring-1 focus:ring-brand-cyan focus:border-brand-cyan transition-all"
+                      />
+                    </div>
+                  )}
+
+                  {mode === "SolarCompanySignup" && (
+                    <div className="relative">
+                      <Building2 className="absolute left-4 top-3.5 w-5 h-5 text-brand-gray" />
+                      <input 
+                        type="text" 
+                        placeholder="Company Name" 
+                        value={company}
+                        onChange={(e) => setCompany(e.target.value)}
+                        required
+                        className="w-full bg-brand-black/60 border border-white/10 rounded-xl py-3.5 pl-12 pr-4 text-sm text-white placeholder-brand-gray focus:outline-none focus:ring-1 focus:ring-brand-cyan focus:border-brand-cyan transition-all"
+                      />
+                    </div>
+                  )}
+
+                  <div className="relative">
+                    <Mail className="absolute left-4 top-3.5 w-5 h-5 text-brand-gray" />
+                    <input 
+                      type="email" 
+                      placeholder={mode === "SolarCompanySignup" ? "Company Email Address" : "Email Address"} 
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      required
+                      className="w-full bg-brand-black/60 border border-white/10 rounded-xl py-3.5 pl-12 pr-4 text-sm text-white placeholder-brand-gray focus:outline-none focus:ring-1 focus:ring-brand-cyan focus:border-brand-cyan transition-all"
+                    />
+                  </div>
+
+                  {mode === "ContactSales" && (
+                    <div className="relative">
+                      <Building2 className="absolute left-4 top-3.5 w-5 h-5 text-brand-gray" />
+                      <input 
+                        type="text" 
+                        placeholder="Company Name" 
+                        value={company}
+                        onChange={(e) => setCompany(e.target.value)}
+                        required
+                        className="w-full bg-brand-black/60 border border-white/10 rounded-xl py-3.5 pl-12 pr-4 text-sm text-white placeholder-brand-gray focus:outline-none focus:ring-1 focus:ring-brand-cyan focus:border-brand-cyan transition-all"
+                      />
+                    </div>
+                  )}
+
+                  {mode !== "ContactSales" && (
+                    <div className="space-y-1.5">
+                      <div className="relative">
+                        <KeyRound className="absolute left-4 top-3.5 w-5 h-5 text-brand-gray" />
+                        <input 
+                          type="password" 
+                          placeholder={
+                            mode === "ForgotPassword"
+                              ? "Enter New Password"
+                              : mode === "SolarCompanySignup" 
+                              ? "Corporate Password" 
+                              : "Security Code (Password)"
+                          } 
+                          value={password}
+                          onChange={(e) => setPassword(e.target.value)}
+                          required
+                          className="w-full bg-brand-black/60 border border-white/10 rounded-xl py-3.5 pl-12 pr-4 text-sm text-white placeholder-brand-gray focus:outline-none focus:ring-1 focus:ring-brand-cyan focus:border-brand-cyan transition-all"
+                        />
+                      </div>
+
+                      {mode === "Login" && (
+                        <div className="flex justify-end pt-1">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setError(null);
+                              setResetSuccess(false);
+                              setMode("ForgotPassword");
+                            }}
+                            className="text-xs text-brand-cyan hover:underline bg-transparent border-none cursor-pointer p-0 font-medium"
+                          >
+                            Forgot password?
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
-              )}
 
-              {mode !== "ContactSales" && (
-                <div className="relative">
-                  <KeyRound className="absolute left-4 top-3.5 w-5 h-5 text-brand-gray" />
-                  <input 
-                    type="password" 
-                    placeholder={mode === "SolarCompanySignup" ? "Corporate Password" : "Security Code (Password)"} 
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                    className="w-full bg-brand-black/60 border border-white/10 rounded-xl py-3.5 pl-12 pr-4 text-sm text-white placeholder-brand-gray focus:outline-none focus:ring-1 focus:ring-brand-cyan focus:border-brand-cyan transition-all"
-                  />
+                {/* CTA button */}
+                <button 
+                  type="submit" 
+                  className="w-full py-4 bg-brand-cyan text-brand-black font-black rounded-xl hover:brightness-110 active:scale-95 transition-all shadow-[0_4px_20px_rgba(0,242,255,0.2)] flex items-center justify-center gap-2 cursor-pointer border-none"
+                >
+                  {mode === "Login" && "Login to Dashboard"}
+                  {mode === "ForgotPassword" && "Reset & Update Password"}
+                  {mode === "CustomerSignup" && "Complete Customer Signup"}
+                  {mode === "SolarCompanySignup" && "Complete Enterprise Signup"}
+                  {mode === "FreeTrial" && "Start 14-Day Free Trial"}
+                  {mode === "ContactSales" && "Submit Sales Inquiry"}
+                  <ArrowRight className="w-5 h-5" />
+                </button>
+
+                {/* Bottom Swappers */}
+                <div className="pt-4 border-t border-white/5 text-center">
+                  {mode === "Login" ? (
+                    <p className="text-xs text-brand-gray flex items-center justify-center gap-2">
+                      <span>Don't have an account?</span>
+                      <button type="button" onClick={() => setMode("ChooseAccountType")} className="text-brand-cyan font-bold hover:underline cursor-pointer bg-transparent border-none">
+                        Sign up free
+                      </button>
+                    </p>
+                  ) : mode === "ForgotPassword" ? (
+                    <p className="text-xs text-brand-gray flex items-center justify-center gap-2">
+                      <span>Remembered password?</span>
+                      <button type="button" onClick={() => setMode("Login")} className="text-brand-cyan font-bold hover:underline cursor-pointer bg-transparent border-none">
+                        Back to Login
+                      </button>
+                    </p>
+                  ) : mode === "CustomerSignup" || mode === "SolarCompanySignup" || mode === "FreeTrial" ? (
+                    <p className="text-xs text-brand-gray flex items-center justify-center gap-2">
+                      <span>Already have an account?</span>
+                      <button type="button" onClick={() => setMode("Login")} className="text-brand-cyan font-bold hover:underline cursor-pointer bg-transparent border-none">
+                        Log in
+                      </button>
+                    </p>
+                  ) : (
+                    <p className="text-xs text-brand-gray">
+                      Need direct developer setup support?{" "}
+                      <a href="mailto:support@novaai.com" className="text-brand-cyan font-bold hover:underline">
+                        Contact tech support
+                      </a>
+                    </p>
+                  )}
                 </div>
-              )}
-            </div>
-
-            {mode === "Login" && loginError && (
-              <p className="text-sm text-red-400">{loginError}</p>
+              </>
             )}
-
-            {/* CTA button */}
-            <button 
-              type="submit" 
-              className="w-full py-4 bg-brand-cyan text-brand-black font-black rounded-xl hover:brightness-110 active:scale-95 transition-all shadow-[0_4px_20px_rgba(0,242,255,0.2)] flex items-center justify-center gap-2 cursor-pointer border-none"
-            >
-              {mode === "Login" && "Login to Dashboard"}
-              {mode === "CustomerSignup" && "Complete Customer Signup"}
-              {mode === "SolarCompanySignup" && "Complete Enterprise Signup"}
-              {mode === "FreeTrial" && "Start 14-Day Free Trial"}
-              {mode === "ContactSales" && "Submit Sales Inquiry"}
-              <ArrowRight className="w-5 h-5" />
-            </button>
-
-            {/* Bottom Swappers */}
-            <div className="pt-4 border-t border-white/5 text-center">
-              {mode === "Login" ? (
-                <p className="text-xs text-brand-gray">
-                  Don't have an account?{" "}
-                  <button type="button" onClick={() => setMode("ChooseAccountType")} className="text-brand-cyan font-bold hover:underline cursor-pointer bg-transparent border-none">
-                    Sign up free
-                  </button>
-                </p>
-              ) : mode === "CustomerSignup" || mode === "SolarCompanySignup" || mode === "FreeTrial" ? (
-                <p className="text-xs text-brand-gray">
-                  Already have an account?{" "}
-                  <button type="button" onClick={() => setMode("Login")} className="text-brand-cyan font-bold hover:underline cursor-pointer bg-transparent border-none">
-                    Log in
-                  </button>
-                </p>
-              ) : (
-                <p className="text-xs text-brand-gray">
-                  Need direct developer setup support?{" "}
-                  <a href="mailto:support@novaai.com" className="text-brand-cyan font-bold hover:underline">
-                    Contact tech support
-                  </a>
-                </p>
-              )}
-            </div>
           </form>
         )}
       </div>

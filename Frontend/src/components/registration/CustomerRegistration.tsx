@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { X, User, Mail, Lock, Eye, EyeOff, MapPin, ShieldCheck, Shield, Zap, Sparkles, ArrowLeft } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
-import axios from "axios";
 
 interface CustomerRegistrationProps {
   onClose: () => void;
@@ -46,57 +45,33 @@ export default function CustomerRegistration({
     return strength; // returns 1, 2, 3, or 4
   };
 
-
-const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-
-    if (!termsAccepted) {
-        alert("Please accept Terms & Conditions");
-        return;
-    }
-
+    if (!termsAccepted) return;
     setIsSubmitting(true);
 
-    try {
+    setTimeout(() => {
+      setIsSubmitting(false);
+      setIsSuccess(true);
 
-        const response = await axios.post(
-            "http://127.0.0.1:8000/register",
-            {
-                name: fullName,
-                email: email,
-                password: password,
-                role: "customer"
-            }
-        );
+      // Save customer to localStorage for dynamic persistent login
+      const registeredUsers = JSON.parse(localStorage.getItem('nova_registered_users') || '[]');
+      const filteredUsers = registeredUsers.filter((u: any) => u.email.toLowerCase() !== email.toLowerCase());
+      filteredUsers.push({
+        fullName,
+        email,
+        password,
+        location,
+        role: 'customer'
+      });
+      localStorage.setItem('nova_registered_users', JSON.stringify(filteredUsers));
 
-        console.log(response.data);
+      setTimeout(() => {
+        onSuccess({ fullName, email, location });
+      }, 1500);
+    }, 2000);
+  };
 
-        setIsSubmitting(false);
-        setIsSuccess(true);
-
-        setTimeout(() => {
-
-            onSuccess({
-                fullName,
-                email,
-                location
-            });
-
-        }, 1000);
-
-    } catch (error: any) {
-
-        setIsSubmitting(false);
-
-        if (error.response) {
-            alert(error.response.data.detail);
-        } else {
-            alert("Cannot connect to backend.");
-        }
-
-        console.error(error);
-    }
-};
   const strength = getPasswordStrength();
 
   return (
@@ -354,15 +329,22 @@ const handleSubmit = async (e: React.FormEvent) => {
           </form>
 
           {/* Alternative Switcher */}
-          <p className="mt-8 text-center text-sm text-[#b9cacb]">
-            Already part of the network?{' '}
+          <div className="mt-8 text-center text-sm text-[#b9cacb] flex items-center justify-center gap-2">
+            <span>Already part of the network?</span>
             <button
               onClick={onSwitchToLogin}
-              className="text-[#00f0ff] font-bold hover:underline ml-1 cursor-pointer bg-transparent border-none outline-none"
+              className="text-[#00f0ff] font-bold hover:underline cursor-pointer bg-transparent border-none outline-none"
             >
               Log In
             </button>
-          </p>
+            <span>•</span>
+            <button
+              onClick={onSwitchToLogin}
+              className="text-[#00f0ff] font-bold hover:underline cursor-pointer bg-transparent border-none outline-none"
+            >
+              Forgot Password?
+            </button>
+          </div>
 
           {/* Decorative Footer */}
           <div className="mt-14 pt-6 border-t border-white/5 flex items-center justify-between opacity-50 text-xs text-[#b9cacb]">

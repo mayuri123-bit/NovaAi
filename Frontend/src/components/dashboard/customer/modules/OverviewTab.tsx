@@ -1,18 +1,24 @@
 import React from 'react';
-import { ArrowRight, BadgeCheck, Bot, Bookmark, Building2, Calculator, FileText, Grid2x2, Map, Sparkles, Store, SunMedium, Wallet, Zap } from 'lucide-react';
-
-interface OverviewTabUser {
-  fullName: string;
-  email?: string;
-  location: string;
-  avatarUrl?: string;
-}
+import { UserInfo } from '../../types';
 
 interface OverviewTabProps {
-  user: OverviewTabUser;
+  user: UserInfo;
   calculatedCapacity: number;
   monthlyBill: number;
+  vendors?: Array<{
+    id: string;
+    name: string;
+    verified: boolean;
+    desc: string;
+    rating: number;
+    reviews: number;
+    distance: number;
+    image: string;
+    saved: boolean;
+  }>;
   setActiveTab: (tab: any) => void;
+  handleRequestQuote?: (vendorName: string) => void;
+  handleToggleSaveVendor?: (id: string) => void;
   [key: string]: any;
 }
 
@@ -20,7 +26,10 @@ export default function OverviewTab({
   user,
   calculatedCapacity,
   monthlyBill,
-  setActiveTab
+  vendors = [],
+  setActiveTab,
+  handleRequestQuote,
+  handleToggleSaveVendor
 }: OverviewTabProps) {
   // Simple calculation to display a dynamic, interactive currency value
   const estimatedSavingsInRupees = (monthlyBill * 83).toLocaleString('en-IN', {
@@ -56,7 +65,7 @@ export default function OverviewTab({
               referrerPolicy="no-referrer"
             />
             <div className="absolute bottom-4 right-4 z-20 glass-panel px-4 py-2 rounded-lg flex items-center gap-2 border-primary/30">
-              <Zap className="w-4 h-4 text-primary neon-glow" />
+              <span className="material-symbols-outlined text-primary neon-glow" style={{ fontVariationSettings: '"FILL" 1' }}>bolt</span>
               <span className="font-label-md text-xs font-bold text-white">{calculatedCapacity.toFixed(1)} kW Active</span>
             </div>
           </div>
@@ -67,7 +76,7 @@ export default function OverviewTab({
       <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <div className="premium-card rounded-2xl space-y-6 reveal-item p-8 hover:scale-105 transition-all text-left" style={{ animationDelay: '0.2s' }}>
           <div className="flex justify-between items-start">
-            <Wallet className="w-7 h-7 text-primary neon-glow" />
+            <span className="material-symbols-outlined text-primary text-3xl neon-glow">savings</span>
             <div className="text-right">
               <div className="text-primary-fixed-dim font-label-sm text-xs font-bold text-[#7df4ff]">+12% vs last mo</div>
               <svg className="w-20 h-8 mt-1 text-primary/50" viewBox="0 0 100 40">
@@ -83,7 +92,7 @@ export default function OverviewTab({
 
         <div className="premium-card rounded-2xl space-y-6 reveal-item p-8 hover:scale-105 transition-all text-left" style={{ animationDelay: '0.3s' }}>
           <div className="flex justify-between items-start">
-            <SunMedium className="w-7 h-7 text-secondary neon-glow" />
+            <span className="material-symbols-outlined text-secondary text-3xl neon-glow">solar_power</span>
             <div className="text-right">
               <div className="text-secondary font-label-sm text-xs font-bold text-secondary">Perfect Fit</div>
               <svg className="w-20 h-8 mt-1 text-secondary/50" viewBox="0 0 100 40">
@@ -99,7 +108,7 @@ export default function OverviewTab({
 
         <div className="premium-card rounded-2xl space-y-6 reveal-item p-8 hover:scale-105 transition-all text-left" style={{ animationDelay: '0.5s' }}>
           <div className="flex justify-between items-start">
-            <BadgeCheck className="w-7 h-7 text-primary-container neon-glow" />
+            <span className="material-symbols-outlined text-primary-container text-3xl neon-glow">verified</span>
             <span className="text-primary-container font-label-sm text-xs font-bold text-[#00f0ff]">Available Now</span>
           </div>
           <div>
@@ -116,7 +125,7 @@ export default function OverviewTab({
           {/* Main Tools Grid */}
           <section>
             <h2 className="text-2xl font-bold mb-6 flex items-center gap-3 text-white reveal-item">
-              <Grid2x2 className="w-6 h-6 text-primary" />
+              <span className="material-symbols-outlined text-primary text-2xl">grid_view</span>
               Main Tools
             </h2>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
@@ -134,12 +143,7 @@ export default function OverviewTab({
                   className="premium-card rounded-2xl group flex flex-col items-center justify-center text-center space-y-3 reveal-item intelligence-card cursor-pointer"
                 >
                   <div className={`w-20 h-20 rounded-xl ${tool.colorClass} flex items-center justify-center transition-transform icon-float`} style={{ animationDelay: tool.animDelay }}>
-                    {tool.key === 'ai' ? <Bot className="w-8 h-8 text-primary neon-glow" /> : null}
-                    {tool.key === 'nearby' ? <Map className="w-8 h-8 text-secondary neon-glow" /> : null}
-                    {tool.key === 'calculator' ? <Calculator className="w-8 h-8 text-primary neon-glow" /> : null}
-                    {tool.key === 'schemes' ? <Building2 className="w-8 h-8 text-tertiary-fixed-dim neon-glow" /> : null}
-                    {tool.key === 'quotations' ? <FileText className="w-8 h-8 text-primary-fixed-dim neon-glow" /> : null}
-                    {tool.key === 'vendors' ? <Bookmark className="w-8 h-8 text-on-surface-variant neon-glow" /> : null}
+                    <span className="material-symbols-outlined text-5xl neon-glow">{tool.icon}</span>
                   </div>
                   <span className="font-label-md font-bold text-on-surface text-lg">{tool.label}</span>
                 </button>
@@ -147,33 +151,98 @@ export default function OverviewTab({
             </div>
           </section>
 
-          {/* Featured Companies - Best Local Experts Placeholder */}
+          {/* Featured Companies - Best Local Experts */}
           <section className="reveal-item" style={{ animationDelay: '1s' }}>
-            <div className="flex justify-between items-end mb-8">
+            <div className="flex justify-between items-end mb-6">
               <h2 className="text-2xl font-bold flex items-center gap-3 text-white">
-                <Store className="w-6 h-6 text-primary" />
+                <span className="material-symbols-outlined text-primary text-2xl">storefront</span>
                 Best Local Experts
               </h2>
               <button 
                 onClick={() => setActiveTab('nearby')}
                 className="text-primary font-label-md text-sm flex items-center gap-2 hover:underline font-bold bg-transparent border-none cursor-pointer"
               >
-                Explore all
-                <ArrowRight className="w-4 h-4" />
+                Explore all ({vendors.length || 4})
+                <span className="material-symbols-outlined text-sm">arrow_forward</span>
               </button>
             </div>
-            <div className="premium-card p-10 rounded-2xl flex flex-col items-center justify-center min-h-[300px] border-dashed border-white/10 group text-center">
-              <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                <Store className="w-8 h-8 text-on-surface-variant" />
+
+            {vendors.length === 0 ? (
+              <div className="premium-card p-10 rounded-2xl flex flex-col items-center justify-center min-h-[220px] border border-white/10 text-center">
+                <p className="text-on-surface-variant text-base font-medium">Discover top-rated verified solar professionals in your area.</p>
+                <button 
+                  onClick={() => setActiveTab('nearby')}
+                  className="mt-6 px-8 py-3 rounded-xl bg-primary text-on-primary font-bold hover:shadow-[0_0_20px_rgba(0,219,233,0.4)] transition-all cursor-pointer"
+                >
+                  Start Searching
+                </button>
               </div>
-              <p className="text-on-surface-variant text-base font-medium">Discover top-rated verified solar professionals in your area.</p>
-              <button 
-                onClick={() => setActiveTab('nearby')}
-                className="mt-8 px-8 py-3 rounded-xl bg-primary text-on-primary font-bold hover:shadow-[0_0_20px_rgba(0,219,233,0.4)] transition-all cursor-pointer"
-              >
-                Start Searching
-              </button>
-            </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {vendors.slice(0, 2).map((vendor) => (
+                  <div 
+                    key={vendor.id}
+                    className="glass-panel p-6 rounded-2xl border border-white/10 hover:border-[#00dbe9]/30 transition-all flex flex-col justify-between space-y-4 group bg-black/40 hover:bg-black/60"
+                  >
+                    <div className="flex justify-between items-start">
+                      <div className="flex gap-3 items-center">
+                        <div className="w-12 h-12 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center overflow-hidden shrink-0">
+                          {vendor.image ? (
+                            <img src={vendor.image} alt={vendor.name} className="w-full h-full object-contain" referrerPolicy="no-referrer" />
+                          ) : (
+                            <span className="material-symbols-outlined text-2xl text-[#00dbe9]">bolt</span>
+                          )}
+                        </div>
+                        <div>
+                          <div className="flex items-center gap-1.5">
+                            <h4 className="font-bold text-white text-base group-hover:text-[#00dbe9] transition-colors">{vendor.name}</h4>
+                            {vendor.verified && (
+                              <span className="material-symbols-outlined text-[#00dbe9] text-base" style={{ fontVariationSettings: '"FILL" 1' }}>verified</span>
+                            )}
+                          </div>
+                          <div className="flex items-center gap-3 text-xs text-[#b9cacb] mt-0.5">
+                            <span className="text-amber-400 font-bold flex items-center gap-0.5">⭐ {vendor.rating} ({vendor.reviews})</span>
+                            <span>•</span>
+                            <span>📍 {vendor.distance} km away</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <button
+                        onClick={() => handleToggleSaveVendor?.(vendor.id)}
+                        className={`p-2 rounded-lg transition-all cursor-pointer ${
+                          vendor.saved 
+                            ? 'bg-[#00dbe9]/20 text-[#00dbe9] border border-[#00dbe9]/40' 
+                            : 'bg-white/5 text-[#b9cacb] hover:text-white hover:bg-white/10'
+                        }`}
+                        title={vendor.saved ? "Saved to Bookmarks" : "Save Vendor"}
+                      >
+                        <span className="material-symbols-outlined text-lg" style={{ fontVariationSettings: vendor.saved ? '"FILL" 1' : '"FILL" 0' }}>bookmark</span>
+                      </button>
+                    </div>
+
+                    <p className="text-xs text-[#b9cacb]/80 line-clamp-2 leading-relaxed">
+                      {vendor.desc}
+                    </p>
+
+                    <div className="flex gap-2 pt-2 border-t border-white/5">
+                      <button
+                        onClick={() => handleRequestQuote?.(vendor.name)}
+                        className="flex-1 py-2 px-3 rounded-xl bg-[#00dbe9] hover:brightness-110 text-black font-extrabold text-xs transition-all cursor-pointer text-center"
+                      >
+                        Request Free Quote
+                      </button>
+                      <button
+                        onClick={() => setActiveTab('nearby')}
+                        className="py-2 px-3 rounded-xl bg-white/5 hover:bg-white/10 text-white font-bold text-xs transition-all cursor-pointer text-center"
+                      >
+                        View Map
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </section>
         </div>
 
@@ -182,7 +251,7 @@ export default function OverviewTab({
           {/* AI Insight Panel */}
           <div className="premium-card p-8 rounded-2xl border-primary/30 relative overflow-hidden reveal-item text-left" style={{ animationDelay: '0.8s' }}>
             <div className="absolute top-0 right-0 p-4">
-              <Sparkles className="w-6 h-6 text-primary/40 animate-pulse" />
+              <span className="material-symbols-outlined text-primary/40 animate-pulse">auto_awesome</span>
             </div>
             <h3 className="text-xl mb-4 flex items-center gap-2 font-bold text-white">
               AI Assistant Tip
@@ -238,14 +307,14 @@ export default function OverviewTab({
                 onClick={() => setActiveTab('schemes')}
                 className="flex items-start gap-3 group cursor-pointer"
               >
-                <FileText className="w-4 h-4 text-primary mt-1 group-hover:translate-x-1 transition-transform" />
+                <span className="material-symbols-outlined text-primary text-sm mt-1 group-hover:translate-x-1 transition-transform">article</span>
                 <span className="text-sm text-white/90 group-hover:text-primary font-semibold transition-colors">Net Metering Policy 2026</span>
               </li>
               <li 
                 onClick={() => setActiveTab('schemes')}
                 className="flex items-start gap-3 group cursor-pointer"
               >
-                <FileText className="w-4 h-4 text-primary mt-1 group-hover:translate-x-1 transition-transform" />
+                <span className="material-symbols-outlined text-primary text-sm mt-1 group-hover:translate-x-1 transition-transform">article</span>
                 <span className="text-sm text-white/90 group-hover:text-primary font-semibold transition-colors">Federal Solar Tax Credit FAQ</span>
               </li>
             </ul>
