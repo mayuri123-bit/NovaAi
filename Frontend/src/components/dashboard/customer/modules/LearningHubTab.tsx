@@ -140,14 +140,14 @@ export default function CustomerDashboard({ user, onLogout }: CustomerDashboardP
 
   // Quotations state
   const [quotations, setQuotations] = useState([
-    { id: 'Q-9801', vendor: 'Lumina Sun Solutions', systemSize: '8.4 kWp', estimatedCost: '$16,500', status: 'Pending Review', date: 'Jul 05, 2026', savings: '$482/mo' },
-    { id: 'Q-9452', vendor: 'Helios Prime Energy', systemSize: '9.2 kWp', estimatedCost: '$18,200', status: 'Approved & Signed', date: 'Jul 02, 2026', savings: '$510/mo' }
+    { id: 'Q-9801', vendor: 'Lumina Sun Solutions', systemSize: '8.4 kWp', estimatedCost: '₹16,500', status: 'Pending Review', date: 'Jul 05, 2026', savings: '₹482/mo' },
+    { id: 'Q-9452', vendor: 'Helios Prime Energy', systemSize: '9.2 kWp', estimatedCost: '₹18,200', status: 'Approved & Signed', date: 'Jul 02, 2026', savings: '₹510/mo' }
   ]);
 
   // Notifications
   const [notifications, setNotifications] = useState([
     { id: 1, type: 'quote', text: 'Lumina Sun just revised your proposal', time: '2 hours ago', active: true },
-    { id: 2, type: 'milestone', text: 'You reached $5,000 in lifetime savings', time: 'Yesterday', active: true },
+    { id: 2, type: 'milestone', text: 'You reached ₹5,000 in lifetime savings', time: 'Yesterday', active: true },
     { id: 3, type: 'alert', text: 'State subsidy for EV chargers added', time: 'Oct 12, 2023', active: false }
   ]);
 
@@ -235,10 +235,10 @@ export default function CustomerDashboard({ user, onLogout }: CustomerDashboardP
       id: newQuoteId,
       vendor: vendorName,
       systemSize: `${calculatedCapacity.toFixed(1)} kWp`,
-      estimatedCost: `$${estimatedCost.toLocaleString('en-US', {maximumFractionDigits: 0})}`,
+      estimatedCost: `₹${estimatedCost.toLocaleString('en-IN', {maximumFractionDigits: 0})}`,
       status: 'Pending Review',
       date: new Date().toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' }),
-      savings: `$${(monthlyBill * 0.9).toFixed(0)}/mo`
+      savings: `₹${(monthlyBill * 0.9).toFixed(0)}/mo`
     };
     setQuotations(prev => [newQuote, ...prev]);
     

@@ -263,12 +263,12 @@ export default function PriceEstimateTab({
                     GOVT SUBSIDY SAVINGS (40%)
                     <Sparkles className="w-3 h-3 text-amber-400" />
                   </span>
-                  <p className="text-2xl font-bold text-amber-400">-${subsidyAmount.toLocaleString('en-US', {maximumFractionDigits: 0})}</p>
+                  <p className="text-2xl font-bold text-amber-400">-₹{subsidyAmount.toLocaleString('en-IN', {maximumFractionDigits: 0})}</p>
                   <p className="text-[10px] text-amber-400/80">Direct solar rooftop scheme</p>
                 </div>
                 <div className="space-y-1 md:ps-5">
                   <span className="text-xs text-brand-cyan font-mono">NET OUT-OF-POCKET PRICE</span>
-                  <p className="text-2xl font-black text-brand-cyan">${netCost.toLocaleString('en-US', {maximumFractionDigits: 0})}</p>
+                  <p className="text-2xl font-black text-brand-cyan">₹{netCost.toLocaleString('en-IN', {maximumFractionDigits: 0})}</p>
                   <p className="text-[10px] text-brand-cyan/80">Your final clean investment</p>
                 </div>
               </div>
@@ -283,7 +283,7 @@ export default function PriceEstimateTab({
                       <p className="text-white font-medium">Tier-1 Monocrystalline Solar Modules ({selectedQuote.systemSize})</p>
                       <p className="text-brand-gray text-[10px]">High density PV panels with 25-year structural warranty</p>
                     </div>
-                    <span className="font-bold text-white">${(currentCost * 0.45).toLocaleString('en-US', {maximumFractionDigits: 0})}</span>
+                    <span className="font-bold text-white">₹{(currentCost * 0.45).toLocaleString('en-IN', {maximumFractionDigits: 0})}</span>
                   </div>
 
                   <div className="flex justify-between items-center p-3 bg-white/[0.01] border border-white/5 rounded-xl">
@@ -291,7 +291,7 @@ export default function PriceEstimateTab({
                       <p className="text-white font-medium">Smart Hybrid Grid-Tied Inverter Set</p>
                       <p className="text-brand-gray text-[10px]">Efficiency optimizers with real-time app performance logs</p>
                     </div>
-                    <span className="font-bold text-white">${(currentCost * 0.20).toLocaleString('en-US', {maximumFractionDigits: 0})}</span>
+                    <span className="font-bold text-white">₹{(currentCost * 0.20).toLocaleString('en-IN', {maximumFractionDigits: 0})}</span>
                   </div>
 
                   <div className="flex justify-between items-center p-3 bg-white/[0.01] border border-white/5 rounded-xl">
@@ -299,7 +299,7 @@ export default function PriceEstimateTab({
                       <p className="text-white font-medium">Rooftop Mount Structure & Hardware</p>
                       <p className="text-brand-gray text-[10px]">Hot-dip galvanized anti-rust iron wind-resistant mounting rail</p>
                     </div>
-                    <span className="font-bold text-white">${(currentCost * 0.12).toLocaleString('en-US', {maximumFractionDigits: 0})}</span>
+                    <span className="font-bold text-white">₹{(currentCost * 0.12).toLocaleString('en-IN', {maximumFractionDigits: 0})}</span>
                   </div>
 
                   <div className="flex justify-between items-center p-3 bg-white/[0.01] border border-white/5 rounded-xl">
@@ -307,7 +307,7 @@ export default function PriceEstimateTab({
                       <p className="text-white font-medium">Electrical Wiring, AC/DB Boxes & Grounding</p>
                       <p className="text-brand-gray text-[10px]">Copper conduits, surge protection devices, earthing rods</p>
                     </div>
-                    <span className="font-bold text-white">${(currentCost * 0.08).toLocaleString('en-US', {maximumFractionDigits: 0})}</span>
+                    <span className="font-bold text-white">₹{(currentCost * 0.08).toLocaleString('en-IN', {maximumFractionDigits: 0})}</span>
                   </div>
 
                   <div className="flex justify-between items-center p-3 bg-white/[0.01] border border-white/5 rounded-xl">
@@ -315,7 +315,7 @@ export default function PriceEstimateTab({
                       <p className="text-white font-medium">Engineering, Net-Metering approvals & Labor</p>
                       <p className="text-brand-gray text-[10px]">Site analysis, utility grid filing, physical commissioning</p>
                     </div>
-                    <span className="font-bold text-white">${(currentCost * 0.15).toLocaleString('en-US', {maximumFractionDigits: 0})}</span>
+                    <span className="font-bold text-white">₹{(currentCost * 0.15).toLocaleString('en-IN', {maximumFractionDigits: 0})}</span>
                   </div>
                 </div>
               </div>
@@ -389,7 +389,7 @@ export default function PriceEstimateTab({
                 />
                 <div className="flex justify-between text-[10px] text-brand-gray/60 font-mono">
                   <span>10% (Min)</span>
-                  <span>Amount: ${downPaymentAmount.toLocaleString('en-US', {maximumFractionDigits: 0})}</span>
+                  <span>Amount: ₹{downPaymentAmount.toLocaleString('en-IN', {maximumFractionDigits: 0})}</span>
                   <span>80% (Max)</span>
                 </div>
               </div>
@@ -441,26 +441,26 @@ export default function PriceEstimateTab({
             <div className="bg-[#10131c] p-4 rounded-xl space-y-3.5 border border-white/5 text-xs text-left">
               <div className="flex justify-between">
                 <span className="text-brand-gray">Principal Loaned:</span>
-                <span className="text-white font-mono font-bold">${loanAmount.toLocaleString('en-US', {maximumFractionDigits: 0})}</span>
+                <span className="text-white font-mono font-bold">₹{loanAmount.toLocaleString('en-IN', {maximumFractionDigits: 0})}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-brand-gray">Estimated Downpayment:</span>
-                <span className="text-white font-mono font-bold">${downPaymentAmount.toLocaleString('en-US', {maximumFractionDigits: 0})}</span>
+                <span className="text-white font-mono font-bold">₹{downPaymentAmount.toLocaleString('en-IN', {maximumFractionDigits: 0})}</span>
               </div>
               <div className="flex justify-between items-center border-t border-white/5 pt-3">
                 <span className="text-brand-cyan font-bold font-mono">YOUR MONTHLY EMI:</span>
-                <span className="text-brand-cyan font-black text-lg font-mono">${Math.round(monthlyEMI)}/mo</span>
+                <span className="text-brand-cyan font-black text-lg font-mono">₹{Math.round(monthlyEMI)}/mo</span>
               </div>
               <div className="flex justify-between items-center bg-emerald-500/10 p-2.5 rounded-lg border border-emerald-500/10 mt-2">
                 <span className="text-emerald-400 font-bold text-[11px] font-mono">EST. UTILITY SAVINGS:</span>
-                <span className="text-emerald-400 font-black text-sm font-mono">+${Math.round(monthlySavingsVal)}/mo</span>
+                <span className="text-emerald-400 font-black text-sm font-mono">+₹{Math.round(monthlySavingsVal)}/mo</span>
               </div>
 
               <div className="pt-2">
                 <div className="p-3 bg-black/30 border border-white/5 rounded-lg flex items-start gap-2">
                   <TrendingUp className="w-4 h-4 text-brand-cyan flex-shrink-0 mt-0.5" />
                   <p className="text-[10px] text-brand-gray leading-relaxed">
-                    Solar savings of <strong className="text-emerald-400">${Math.round(monthlySavingsVal)}/mo</strong> directly cover your monthly loan EMI of <strong className="text-brand-cyan">${Math.round(monthlyEMI)}/mo</strong>, yielding a net positive cashflow of <strong className="text-white">${Math.round(Math.max(0, monthlySavingsVal - monthlyEMI))}/mo</strong> from Day 1!
+                    Solar savings of <strong className="text-emerald-400">₹{Math.round(monthlySavingsVal)}/mo</strong> directly cover your monthly loan EMI of <strong className="text-brand-cyan">₹{Math.round(monthlyEMI)}/mo</strong>, yielding a net positive cashflow of <strong className="text-white">₹{Math.round(Math.max(0, monthlySavingsVal - monthlyEMI))}/mo</strong> from Day 1!
                   </p>
                 </div>
               </div>
@@ -498,7 +498,7 @@ export default function PriceEstimateTab({
                   <span className="text-white font-bold text-sm block mt-1">{selectedQuote.vendor} - Proposal {selectedQuote.id}</span>
                   <div className="flex justify-between mt-3 pt-3 border-t border-white/5">
                     <span className="text-brand-gray">Net Price:</span>
-                    <span className="text-brand-cyan font-mono font-bold">${netCost.toLocaleString('en-US', {maximumFractionDigits: 0})}</span>
+                    <span className="text-brand-cyan font-mono font-bold">₹{netCost.toLocaleString('en-IN', {maximumFractionDigits: 0})}</span>
                   </div>
                   <div className="flex justify-between mt-1">
                     <span className="text-brand-gray">System Capacity:</span>
