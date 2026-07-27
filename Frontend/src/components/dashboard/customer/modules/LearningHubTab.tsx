@@ -41,6 +41,8 @@ import CalculatorTab from './CalculatorTab';
 import GovSchemesTab from './GovSchemesTab';
 import PriceEstimateTab from './Pric/PriceEstimate';
 import SavedVendorsTab from './SavedVendor';
+import customerImage from '../../../../../assets/images/customerImg.png';
+import vendorImage from '../../../../../assets/images/companyImg.png';
 
 interface CustomerDashboardProps {
   user: {
@@ -132,10 +134,10 @@ export default function CustomerDashboard({ user, onLogout }: CustomerDashboardP
 
   // Interactive Saved Vendors state
   const [vendors, setVendors] = useState([
-    { id: '1', name: 'Lumina Sun Solutions', verified: true, desc: 'Premium Tier-1 panel specialist with 15 years experience.', rating: 4.9, reviews: 242, distance: 2.4, image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuD1b8HZe9CL08s7o7PQSb5XQsZLZWj7x_SQvajIQ5Yw-wxT5jSFsEgsUPo3EmpJnLjdcgjjjqofn-UGkigngnNtm1XKJceWofgqbRC5cfZ-oSt2_TtpxE2X21q5uBU7aMQgkDMDfbXv5JLeMtORgR2zbvSscBhlPMCayQroME1WcXLqr6jjVSqj6QvMQGcTig5BFc7ZEDRS7-PCa-zl6RBPiJa4UdQLl2cuaz3V54WSVEfHg74VV-reYg', saved: true },
-    { id: '2', name: 'Helios Prime Energy', verified: true, desc: 'Smart-grid integration and residential battery experts.', rating: 4.7, reviews: 180, distance: 4.1, image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCruZpfqN8JDOtVg48ZJaGaWXN_i5ho3ZoQuhfnudGz7uEUmjcd2jW_cj5sRrS2gofX9uubZHgtfGArFiv0e_RLhuzF0K-mEJozjigI51woWIevuyAed9Z8RVxf5stYv8CxeUqBImrnCkgmTDjf-XrOFNJIxkAvZvCqJnVJ6CXbWraZv3M0GVKOFfBGds2_U2_DCAEEEs3KtGOChXQtN3ISQ97Vtv_Tf6Fa4w3pT0dVAGPtrwLhIam2tw', saved: true },
-    { id: '3', name: 'Apex Grid Solar', verified: false, desc: 'Affordable, fast-installation monocrystalline panels and inverters.', rating: 4.5, reviews: 92, distance: 5.6, image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuD1b8HZe9CL08s7o7PQSb5XQsZLZWj7x_SQvajIQ5Yw-wxT5jSFsEgsUPo3EmpJnLjdcgjjjqofn-UGkigngnNtm1XKJceWofgqbRC5cfZ-oSt2_TtpxE2X21q5uBU7aMQgkDMDfbXv5JLeMtORgR2zbvSscBhlPMCayQroME1WcXLqr6jjVSqj6QvMQGcTig5BFc7ZEDRS7-PCa-zl6RBPiJa4UdQLl2cuaz3V54WSVEfHg74VV-reYg', saved: false },
-    { id: '4', name: 'Evergreen Volt', verified: true, desc: '100% eco-responsible microinverters and net-metering specialists.', rating: 4.8, reviews: 114, distance: 3.2, image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCruZpfqN8JDOtVg48ZJaGaWXN_i5ho3ZoQuhfnudGz7uEUmjcd2jW_cj5sRrS2gofX9uubZHgtfGArFiv0e_RLhuzF0K-mEJozjigI51woWIevuyAed9Z8RVxf5stYv8CxeUqBImrnCkgmTDjf-XrOFNJIxkAvZvCqJnVJ6CXbWraZv3M0GVKOFfBGds2_U2_DCAEEEs3KtGOChXQtN3ISQ97Vtv_Tf6Fa4w3pT0dVAGPtrwLhIam2tw', saved: false }
+    { id: '1', name: 'Lumina Sun Solutions', verified: true, desc: 'Premium Tier-1 panel specialist with 15 years experience.', rating: 4.9, reviews: 242, distance: 2.4, image: vendorImage, saved: true },
+    { id: '2', name: 'Helios Prime Energy', verified: true, desc: 'Smart-grid integration and residential battery experts.', rating: 4.7, reviews: 180, distance: 4.1, image: customerImage, saved: true },
+    { id: '3', name: 'Apex Grid Solar', verified: false, desc: 'Affordable, fast-installation monocrystalline panels and inverters.', rating: 4.5, reviews: 92, distance: 5.6, image: vendorImage, saved: false },
+    { id: '4', name: 'Evergreen Volt', verified: true, desc: '100% eco-responsible microinverters and net-metering specialists.', rating: 4.8, reviews: 114, distance: 3.2, image: customerImage, saved: false }
   ]);
 
   // Quotations state

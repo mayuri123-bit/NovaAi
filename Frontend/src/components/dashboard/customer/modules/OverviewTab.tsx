@@ -1,5 +1,7 @@
 import React from 'react';
+import { Bot, Bookmark, Calculator, FileText, Landmark, MapPinned } from 'lucide-react';
 import { UserInfo } from '../../types';
+import customerImage from '../../../../../assets/images/customerImg.png';
 
 interface OverviewTabProps {
   user: UserInfo;
@@ -60,7 +62,7 @@ export default function OverviewTab({
             <div className="absolute -top-10 -right-10 w-40 h-40 bg-primary/10 rounded-full blur-3xl group-hover:bg-primary/20 transition-all"></div>
             <img 
               className="w-full h-auto rounded-xl shadow-2xl relative z-10 transition-transform duration-700 group-hover:scale-105" 
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuCDUfq4VOrB8Zf6xqJnrwgnUmn_AxEnzKVr4_Jy5Lo_xC7t5rxTAkKXRwoDYQMxLTAUjZubsha4OUhBIP-BpxxbhMsSe20U8SxssxcDVl7Ge2rO6WYsN-tqgF26JVyU13Ox2FWf8_k-qQ47mN4xldO1_9-roTqfPJRwR9AXXJ-mBxyIl0z9-s1bpyBeC8YZnhlyxqw8cIz42lhL4SgVTDFhJBrxuhxNLfLixfmGWxvR2rGOvGQJpai9wA"
+              src={customerImage}
               alt="Solar panels grid installation illustration mockup"
               referrerPolicy="no-referrer"
             />
@@ -130,12 +132,12 @@ export default function OverviewTab({
             </h2>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
               {[
-                { key: 'ai', label: 'AI Assistant', icon: 'smart_toy', colorClass: 'text-primary bg-primary/10', animDelay: '0s' },
-                { key: 'nearby', label: 'Nearby Solar', icon: 'map', colorClass: 'text-secondary bg-secondary/10', animDelay: '0.5s' },
-                { key: 'calculator', label: 'Cost Calculator', icon: 'calculate', colorClass: 'text-primary bg-primary/10', animDelay: '1s' },
-                { key: 'schemes', label: 'Government Help', icon: 'account_balance', colorClass: 'text-tertiary-fixed-dim bg-tertiary-container/20', animDelay: '1.5s' },
-                { key: 'quotations', label: 'Price Estimates', icon: 'request_quote', colorClass: 'text-primary-fixed-dim bg-primary-fixed-dim/20', animDelay: '2s' },
-                { key: 'vendors', label: 'Saved Vendors', icon: 'bookmarks', colorClass: 'text-on-surface-variant bg-on-surface-variant/10', animDelay: '2.5s' },
+                { key: 'ai', label: 'AI Assistant', Icon: Bot, colorClass: 'text-primary bg-primary/10', animDelay: '0s' },
+                { key: 'nearby', label: 'Nearby Solar', Icon: MapPinned, colorClass: 'text-secondary bg-secondary/10', animDelay: '0.5s' },
+                { key: 'calculator', label: 'Cost Calculator', Icon: Calculator, colorClass: 'text-primary bg-primary/10', animDelay: '1s' },
+                { key: 'schemes', label: 'Government Help', Icon: Landmark, colorClass: 'text-tertiary-fixed-dim bg-tertiary-container/20', animDelay: '1.5s' },
+                { key: 'quotations', label: 'Price Estimates', Icon: FileText, colorClass: 'text-primary-fixed-dim bg-primary-fixed-dim/20', animDelay: '2s' },
+                { key: 'vendors', label: 'Saved Vendors', Icon: Bookmark, colorClass: 'text-on-surface-variant bg-on-surface-variant/10', animDelay: '2.5s' },
               ].map((tool) => (
                 <button
                   key={tool.key}
@@ -143,7 +145,7 @@ export default function OverviewTab({
                   className="premium-card rounded-2xl group flex flex-col items-center justify-center text-center space-y-3 reveal-item intelligence-card cursor-pointer"
                 >
                   <div className={`w-20 h-20 rounded-xl ${tool.colorClass} flex items-center justify-center transition-transform icon-float`} style={{ animationDelay: tool.animDelay }}>
-                    <span className="material-symbols-outlined text-5xl neon-glow">{tool.icon}</span>
+                    <tool.Icon className="w-11 h-11 neon-glow" strokeWidth={1.8} aria-hidden="true" />
                   </div>
                   <span className="font-label-md font-bold text-on-surface text-lg">{tool.label}</span>
                 </button>

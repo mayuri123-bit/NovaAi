@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
+import customerImage from '../../../../../assets/images/customerImg.png';
 
 interface Vendor {
   id: string;
@@ -106,7 +107,7 @@ export default function SavedVendorsTab({
           >
             {filteredSaved.map((vendor) => {
               const tags = VENDOR_TAGS[vendor.id] || ['Rooftop Installation', 'Battery Storage'];
-              const logo = VENDOR_LOGOS[vendor.id] || vendor.image || 'https://lh3.googleusercontent.com/aida-public/AB6AXuA4V0aByG2xzm18qS6JqeVtJhQD4nX_WCUXQ_wW4krCwG0_DFjUNBRQTcWpEyb-TY_wTTUq3c-COV9fCD4kr8WRLQouUBNI__dhus1JCr8Z51g7A5qpkAUSpFLVxOqd1VgQ-oEzmQPB5T0V2T6rjIT0Kws1JFaf0T6YKw76V6GK90olefWR-akH6V1Jy6hc8WzodgCHSJu712ueHA_kjOnj8Uqt8DBd9ODaVoiaRJ63NdMd3E4GWwIQ1Q';
+              const logo = vendor.image || customerImage;
               const location = VENDOR_LOCATIONS[vendor.id] || 'Mumbai, MH';
 
               return (

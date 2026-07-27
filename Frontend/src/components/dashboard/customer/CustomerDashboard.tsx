@@ -94,6 +94,23 @@ export default function CalculatorTab({
     setShowResults(false);
   };
 
+  return (
+    <div className="py-6 flex flex-col items-center max-w-7xl mx-auto relative z-10 w-full text-left">
+      {!showResults ? (
+        <>
+          {/* Header Section */}
+          <header className="text-center mb-16 max-w-3xl mx-auto">
+            <span className="inline-block px-3 py-1 rounded-full border border-primary/30 bg-primary/5 text-primary text-xs font-semibold uppercase tracking-widest mb-6">
+              Efficiency Estimator
+            </span>
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-primary mb-6 leading-tight tracking-tight text-white">
+              Solar Investment Intelligence
+            </h1>
+            <p className="text-base md:text-lg text-on-surface-variant font-medium max-w-2xl mx-auto leading-relaxed">
+              Harness our AI-driven models to predict your energy independence. Enter your current expenses to unlock a precise transition roadmap.
+            </p>
+          </header>
+
           {/* Calculator Card */}
           <section className="w-full max-w-2xl mx-auto">
             <form onSubmit={calculateResults} className="glass-card p-8 md:p-12 rounded-3xl relative overflow-hidden transition-all duration-500">
@@ -127,7 +144,7 @@ export default function CalculatorTab({
             </form>
           </section>
         </>
-        
+      ) : (
         /* Detailed Lumina Portal Price Estimate Layout */
         <div className="w-full space-y-10 reveal-item text-left">
           {/* Custom style block to support the exact glassmorphism design tokens */}
